@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/home"
+        app:labelVisibilityMode="unlabeled"
+        android:title=""
+        android:icon="@drawable/ic_home"/>
+
+    <item
+        android:id="@+id/completed"
+        app:labelVisibilityMode="unlabeled"
+        android:title=""
+        android:icon="@drawable/ic_complete"/>
+
+    <item
+        android:id="@+id/failed"
+        app:labelVisibilityMode="unlabeled"
+        android:title=""
+        android:icon="@drawable/ic_failed"/>
+
+    <item
+        android:id="@+id/planned"
+        app:labelVisibilityMode="unlabeled"
+        android:title=""
+        android:icon="@drawable/ic_planned"/>
+
+</menu>

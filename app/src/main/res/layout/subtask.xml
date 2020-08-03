@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Подзадачи для мейн активити -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="20dp">
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:enabled="false"
+        android:layout_margin="3dp" />
+
+    <TextView
+        android:id="@+id/subtask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/checkBox"
+        android:textSize="16dp"
+        android:text="SUBTASK SUBTASK SUBTASK SUBTASK"
+        android:layout_toLeftOf="@+id/imageButton"
+        android:layout_centerVertical="true"
+        />
+
+</RelativeLayout>
