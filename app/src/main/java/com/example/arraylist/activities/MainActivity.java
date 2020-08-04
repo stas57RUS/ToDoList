@@ -1,12 +1,13 @@
 package com.example.arraylist.activities;
 
-import androidx.annotation.NonNull;;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.example.arraylist.fragments.FragmentCharts;
 import com.example.arraylist.fragments.FragmentComplete;
 import com.example.arraylist.fragments.FragmentFailed;
 import com.example.arraylist.fragments.FragmentHome;
@@ -49,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case R.id.planned:
                             selectFragment = new FragmentPlanned();
+                            break;
+                        case R.id.charts:
+                            selectFragment = new FragmentCharts();
                             break;
                     }
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectFragment)

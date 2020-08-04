@@ -26,4 +26,10 @@
         android:title=""
         android:icon="@drawable/ic_planned"/>
 
+    <item
+        android:id="@+id/charts"
+        app:labelVisibilityMode="unlabeled"
+        android:title=""
+        android:icon="@drawable/assessment_24px"/>
+
 </menu>
