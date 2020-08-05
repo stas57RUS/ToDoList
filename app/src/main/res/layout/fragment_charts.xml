@@ -6,21 +6,6 @@
     android:layout_height="match_parent"
     android:layout_marginHorizontal="5dp">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
 
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:clickable="true"
-        app:srcCompat="@android:drawable/ic_input_add"
-        android:focusable="true"
-        android:layout_marginBottom="2dp"/>
 
 </RelativeLayout>

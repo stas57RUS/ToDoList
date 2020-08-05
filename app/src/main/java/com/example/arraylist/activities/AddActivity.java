@@ -1,6 +1,7 @@
 package com.example.arraylist.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.database.sqlite.SQLiteDatabase;
@@ -45,6 +46,10 @@ public class AddActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         dbHelper = new DBHelper(getApplicationContext());
         ImageButton imageButton = findViewById(R.id.imageButton);
@@ -109,6 +114,7 @@ public class AddActivity extends AppCompatActivity {
                             dbHelper.addTableHome(task);
                         else
                             dbHelper.addTablePlanned(task);
+                        dbHelper.addTableSubtasks(task.subtasks, task.task);
                     }
                     finish();
                 }

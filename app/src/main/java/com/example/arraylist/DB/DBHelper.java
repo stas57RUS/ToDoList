@@ -328,7 +328,6 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(COLUMN_DATE_START, item.dateStart);
         values.put(COLUMN_DATE_FINISH, item.dateFinish);
         db.insert(TABLE_PLANNED, null, values);
-        addTableSubtasks(item.subtasks, item.task);
     }
 
     public void addTableSubtasks(@NonNull ArrayList<Subtask> subtasks,

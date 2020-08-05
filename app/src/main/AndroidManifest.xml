@@ -13,19 +13,26 @@
         <receiver android:name=".scheduledNotification.TimeNotification" />
 
         <activity
+            android:name=".activities.SettingsActivity"
+            android:label="Настройки"
+            android:parentActivityName=".activities.MainActivity">
+        </activity>
+        <activity
             android:name=".activities.AddActivity"
-            android:label="Добавление новой задачи"
+            android:label="Добавление задачи"
+            android:parentActivityName=".activities.MainActivity"
             android:windowSoftInputMode="adjustNothing">
-
         </activity>
         <activity
             android:name=".activities.MainActivity"
             android:label="Список задач">
         </activity>
-        <activity android:name=".activities.SplashScreenActivity"
+        <activity
+            android:name=".activities.SplashScreenActivity"
             android:theme="@style/SplashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

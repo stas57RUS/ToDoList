@@ -19,7 +19,7 @@ public class StartAlarm {
     public void start() {
         DBHelper dbHelper = new DBHelper(context);
         int alarmState = dbHelper.getAlarmSate();
-        if (alarmState == dbHelper.ALARM_STATE_WAITING_FOR_START) {
+        if (alarmState == DBHelper.ALARM_STATE_WAITING_FOR_START) {
 
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
@@ -36,7 +36,7 @@ public class StartAlarm {
                     AlarmManager.INTERVAL_DAY, pendingIntent);
 
 
-            dbHelper.changeAlamState(dbHelper.ALARM_STATE_RUNNING);
+            dbHelper.changeAlamState(DBHelper.ALARM_STATE_RUNNING);
 
         }
     }
