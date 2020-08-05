@@ -36,38 +36,39 @@ public class FragmentCharts extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_charts, container, false);
 
-//        dbHelper = new DBHelper(getContext());
-//        recyclerView = view.findViewById(R.id.recyclerView);
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-//        recyclerView.setLayoutManager(layoutManager);
-//        RecyclerView.ItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
-//        recyclerView.addItemDecoration(divider);
+        dbHelper = new DBHelper(getContext());
+        recyclerView = view.findViewById(R.id.recyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        RecyclerView.ItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(divider);
 
-        return inflater.inflate(R.layout.fragment_charts, container, false);
+        return view;
     }
-//
-//    @Override`
-//    public void onStart() {
-//        super.onStart();
-//        TaskTimeChecker taskTimeChecker = new TaskTimeChecker(setZeroTimeDate(new Date()).getTime(),
-//                getContext());
-//        taskTimeChecker.checkPlannedTasks();
-//        taskTimeChecker.checkActiveTasks();
-//
-//        adapter = new MultiTypeTaskAdapter(dbHelper.elementsFailed(),
-//                MultiTypeTaskAdapter.PARENT_FAILED, getContext());
-//        recyclerView.setAdapter(adapter);
-//    }
-//
-//    private Date setZeroTimeDate(Date date) {
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.setTime(date);
-//        calendar.set(Calendar.HOUR_OF_DAY, 0);
-//        calendar.set(Calendar.MINUTE, 0);
-//        calendar.set(Calendar.SECOND, 0);
-//        calendar.set(Calendar.MILLISECOND, 0);
-//        date = calendar.getTime();
-//        return date;
-//    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        TaskTimeChecker taskTimeChecker = new TaskTimeChecker(setZeroTimeDate(new Date()).getTime(),
+                getContext());
+        taskTimeChecker.checkPlannedTasks();
+        taskTimeChecker.checkActiveTasks();
+
+        adapter = new MultiTypeTaskAdapter(dbHelper.elementsFailed(),
+                MultiTypeTaskAdapter.PARENT_FAILED, getContext());
+        recyclerView.setAdapter(adapter);
+    }
+
+    private Date setZeroTimeDate(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        date = calendar.getTime();
+        return date;
+    }
 }
