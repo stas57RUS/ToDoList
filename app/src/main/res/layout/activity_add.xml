@@ -51,6 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/comment"
         android:layout_marginLeft="15dp"
+        android:textColor="#000000"
         android:text="Выберите дату"
         android:textStyle="bold"
         android:textSize="23dp"/>

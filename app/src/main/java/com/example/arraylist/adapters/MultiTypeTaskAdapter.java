@@ -270,7 +270,7 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
                 @Override
                 public void onClick(View v) {
                     dbHelper = new DBHelper(v.getContext());
-                    dbHelper.updateTableSubtasks_checkBox(subtask.id, checked);
+                    dbHelper.updateTableSubtask_checkBox(subtask.id, checked);
                 }
             });
         }

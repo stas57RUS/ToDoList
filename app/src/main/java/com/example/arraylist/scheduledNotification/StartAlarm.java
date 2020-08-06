@@ -20,7 +20,6 @@ public class StartAlarm {
         DBHelper dbHelper = new DBHelper(context);
         int alarmState = dbHelper.getAlarmSate();
         if (alarmState == DBHelper.ALARM_STATE_WAITING_FOR_START) {
-
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
             Intent intent = new Intent(context, TimeNotification.class);
@@ -29,15 +28,13 @@ public class StartAlarm {
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.set(Calendar.HOUR_OF_DAY, 6);
-            calendar.set(Calendar.MINUTE, 30);
+            calendar.set(Calendar.HOUR_OF_DAY, dbHelper.getAlarmHours());
+            calendar.set(Calendar.MINUTE, dbHelper.getAlarmMinutes());
 
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                     AlarmManager.INTERVAL_DAY, pendingIntent);
 
-
-            dbHelper.changeAlamState(DBHelper.ALARM_STATE_RUNNING);
-
+            dbHelper.updateAlamState(DBHelper.ALARM_STATE_RUNNING);
         }
     }
 }

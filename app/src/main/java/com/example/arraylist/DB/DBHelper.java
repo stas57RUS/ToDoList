@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -37,6 +38,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_KEY = "column_key";
 
     public static final String COLUMN_STATE = "state";
+    public static final String COLUMN_TIME_HOURS = "time_hours";
+    public static final String COLUMN_TIME_MINUTES = "time_minutes";
 
     public static final int ALARM_STATE_RUNNING = 101;
     public static final int ALARM_STATE_NOT_WORKING = 102;
@@ -70,7 +73,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("create table " + TABLE_SUBTASKS + "(" + COLUMN_ID + " Long primary key," +
                 COLUMN_SUBTASKS + " text," + COLUMN_CHECKED + " boolean," +
                 COLUMN_KEY + " text" + ")"); // COLUMN_KEY = PARENT TASK NAME
-        db.execSQL("create table " + TABLE_ALARM_STATE + "(" + COLUMN_STATE + " int" + ")");
+        db.execSQL("create table " + TABLE_ALARM_STATE + "(" + COLUMN_STATE + " int," + COLUMN_TIME_HOURS
+                + " int," + COLUMN_TIME_MINUTES + " int" + ")");
     }
 
     @Override
@@ -101,6 +105,8 @@ public class DBHelper extends SQLiteOpenHelper {
         else {
             ContentValues values = new ContentValues();
             values.put(COLUMN_STATE, ALARM_STATE_WAITING_FOR_START);
+            values.put(COLUMN_TIME_HOURS, 6);
+            values.put(COLUMN_TIME_MINUTES, 30);
             db.insert(TABLE_ALARM_STATE, null, values);
             state = ALARM_STATE_WAITING_FOR_START;
         }
@@ -108,9 +114,35 @@ public class DBHelper extends SQLiteOpenHelper {
         return state;
     }
 
-    public void changeAlamState(int state){
+    public int getAlarmHours() {
+//        int hours;
+        Cursor cursor = db.query(TABLE_ALARM_STATE, null, null, null,
+                null, null, null);
+        cursor.moveToFirst();
+        int hours = cursor.getInt(cursor.getColumnIndex(COLUMN_TIME_HOURS));
+        cursor.close();
+        return hours;
+    }
+
+    public int getAlarmMinutes() {
+        Cursor cursor = db.query(TABLE_ALARM_STATE, null, null, null,
+                null, null, null);
+        cursor.moveToFirst();
+        int minutes = cursor.getInt(cursor.getColumnIndex(COLUMN_TIME_MINUTES));
+        cursor.close();
+        return minutes;
+    }
+
+    public void updateAlamState(int state){
         ContentValues values = new ContentValues();
         values.put(COLUMN_STATE, state);
+        db.update(TABLE_ALARM_STATE, values, null, null);
+    }
+
+    public void updateAlarmTime(int hours, int minutes) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TIME_HOURS, hours);
+        values.put(COLUMN_TIME_MINUTES, minutes);
         db.update(TABLE_ALARM_STATE, values, null, null);
     }
 
@@ -342,14 +374,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-//    public void updateTableSubtasks_Key(Long oldKey, Long newKey) { // Замена всех элементов с переданным ID
-//        ContentValues values = new ContentValues();
-//        values.put(COLUMN_KEY, newKey);
-//        db.update(TABLE_SUBTASKS, values, COLUMN_KEY + " = ?",
-//                new String[] {String.valueOf(oldKey)});
-//    }
-
-    public void updateTableSubtasks_checkBox(Long id, Boolean state) {
+    public void updateTableSubtask_checkBox(Long id, Boolean state) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_CHECKED, !state);
         db.update(TABLE_SUBTASKS, values, COLUMN_ID + " = ?",
@@ -378,8 +403,4 @@ public class DBHelper extends SQLiteOpenHelper {
                     new String[]{String.valueOf(id.get(i))});
         }
     }
-
-//    public void deleteSubtasks(ArrayList<Long> id){
-//        db.delete(TABLE_SUBTASKS, COLUMN_ID	+ "	= ?", new String[] { String.valueOf(id)});
-//    }
 }
