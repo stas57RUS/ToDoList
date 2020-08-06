@@ -12,13 +12,13 @@
         android:id="@+id/completed"
         app:labelVisibilityMode="unlabeled"
         android:title=""
-        android:icon="@drawable/ic_complete"/>
+        android:icon="@drawable/check_circle_24px"/>
 
     <item
         android:id="@+id/failed"
         app:labelVisibilityMode="unlabeled"
         android:title=""
-        android:icon="@drawable/ic_failed"/>
+        android:icon="@drawable/highlight_off_24px"/>
 
     <item
         android:id="@+id/planned"
