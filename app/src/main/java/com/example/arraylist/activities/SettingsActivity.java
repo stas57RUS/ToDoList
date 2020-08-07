@@ -7,7 +7,9 @@ import androidx.fragment.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.arraylist.DB.DBHelper;
@@ -27,6 +29,20 @@ public class SettingsActivity extends AppCompatActivity implements TimePickerDia
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Switch switch1 = findViewById(R.id.switch1);
+        switch1.setChecked(getChecked());
+        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked)
+                    dbHelper.updateAlarmState(DBHelper.ALARM_STATE_WAITING_START);
+                else
+                    dbHelper.updateAlarmState(DBHelper.ALARM_STATE_WAITING_STOP);
+                AlarmHelper alarmHelper = new AlarmHelper(getApplicationContext());
+                alarmHelper.run();
+            }
+        });
 
         TextView tvTimePickerTime = findViewById(R.id.tvTimePickerTime);
         tvTimePickerTime.setText("После - " + dbHelper.getAlarmHours() + ":" +
@@ -56,5 +72,9 @@ public class SettingsActivity extends AppCompatActivity implements TimePickerDia
 
         AlarmHelper alarmHelper = new AlarmHelper(getApplicationContext());
         alarmHelper.run();
+    }
+
+    private boolean getChecked() {
+        return dbHelper.getAlarmSate() == DBHelper.ALARM_STATE_RUNNING;
     }
 }
