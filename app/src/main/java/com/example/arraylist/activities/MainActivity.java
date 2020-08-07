@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.example.arraylist.fragments.FragmentCharts;
 import com.example.arraylist.fragments.FragmentComplete;
@@ -19,7 +18,7 @@ import com.example.arraylist.fragments.FragmentFailed;
 import com.example.arraylist.fragments.FragmentHome;
 import com.example.arraylist.fragments.FragmentPlanned;
 import com.example.arraylist.R;
-import com.example.arraylist.scheduledNotification.StartAlarm;
+import com.example.arraylist.scheduledNotification.AlarmHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        StartAlarm startAlarm = new StartAlarm(getApplicationContext());
-        startAlarm.start();
+        AlarmHelper alarmHelper = new AlarmHelper(getApplicationContext());
+        alarmHelper.run();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FragmentHome())
                 .commit();

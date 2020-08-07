@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -43,8 +42,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static final int ALARM_STATE_RUNNING = 101;
     public static final int ALARM_STATE_NOT_WORKING = 102;
-    public static final int ALARM_STATE_WAITING_FOR_START = 103;
-    public static final int ALARM_STATE_WAITING_FOR_STOP = 104;
+    public static final int ALARM_STATE_WAITING_START = 103;
+    public static final int ALARM_STATE_WAITING_STOP = 104;
+    public static final int ALARM_STATE_WAITING_UPDATE = 105;
 
     private SQLiteDatabase db = this.getWritableDatabase();
 
@@ -104,11 +104,11 @@ public class DBHelper extends SQLiteOpenHelper {
         //Если в таблице нет значений(первый запуск)
         else {
             ContentValues values = new ContentValues();
-            values.put(COLUMN_STATE, ALARM_STATE_WAITING_FOR_START);
+            values.put(COLUMN_STATE, ALARM_STATE_WAITING_START);
             values.put(COLUMN_TIME_HOURS, 6);
             values.put(COLUMN_TIME_MINUTES, 30);
             db.insert(TABLE_ALARM_STATE, null, values);
-            state = ALARM_STATE_WAITING_FOR_START;
+            state = ALARM_STATE_WAITING_START;
         }
         cursor.close();
         return state;
@@ -133,7 +133,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return minutes;
     }
 
-    public void updateAlamState(int state){
+    public void updateAlarmState(int state){
         ContentValues values = new ContentValues();
         values.put(COLUMN_STATE, state);
         db.update(TABLE_ALARM_STATE, values, null, null);

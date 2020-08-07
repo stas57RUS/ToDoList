@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.example.arraylist.DB.DBHelper;
 import com.example.arraylist.R;
 import com.example.arraylist.other.TimePicker;
+import com.example.arraylist.scheduledNotification.AlarmHelper;
 
 public class SettingsActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
     private DBHelper dbHelper;
@@ -45,8 +46,15 @@ public class SettingsActivity extends AppCompatActivity implements TimePickerDia
     @Override
     public void onTimeSet(android.widget.TimePicker timePicker, int hours, int minutes) {
         TextView alarmTime = findViewById(R.id.tvTimePickerTime);
-        alarmTime.setText("После - " + hours + ":" + minutes);
+        if (minutes < 10)
+            alarmTime.setText("После - " + hours + ":0" + minutes);
+        else
+            alarmTime.setText("После - " + hours + ":" + minutes);
 
         dbHelper.updateAlarmTime(hours, minutes);
+        dbHelper.updateAlarmState(DBHelper.ALARM_STATE_WAITING_UPDATE);
+
+        AlarmHelper alarmHelper = new AlarmHelper(getApplicationContext());
+        alarmHelper.run();
     }
 }

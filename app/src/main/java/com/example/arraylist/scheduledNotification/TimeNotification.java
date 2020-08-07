@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -67,7 +68,6 @@ public class TimeNotification extends BroadcastReceiver {
     }
 
     private void createNotificationChannel(Context context) {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             CharSequence name = "TaskNotificationChannel";
             String descriprion = "Channel for tasks-__-";
@@ -79,7 +79,6 @@ public class TimeNotification extends BroadcastReceiver {
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(notificationChannel);
         }
-
     }
 
     private Date setZeroTimeDate(Date date) {
