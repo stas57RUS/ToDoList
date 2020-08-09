@@ -12,18 +12,21 @@ import com.example.arraylist.items.Subtask;
 import com.example.arraylist.items.Task;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "tasks";
+    public static final String DATABASE_NAME = "database";
 
     public static final String TABLE_HOME = "home";
-    public static final String TABLE_COMPLETE = "complete";
+    public static final String TABLE_COMPLETED = "complete";
     public static final String TABLE_FAILED = "failed";
     public static final String TABLE_PLANNED = "planned";
     public static final String TABLE_SUBTASKS = "table_subtasks";
     public static final String TABLE_ALARM_STATE = "alarm_state";
+    public static final String TABLE_STATS = "stats";
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TASK = "task";
@@ -40,11 +43,18 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TIME_HOURS = "time_hours";
     public static final String COLUMN_TIME_MINUTES = "time_minutes";
 
+    public static final String COLUMN_STATS_DATE = "stats_date";
+    public static final String COLUMN_COMPLETED = "completed";
+    public static final String COLUMN_FAILED = "failed";
+
     public static final int ALARM_STATE_RUNNING = 101;
     public static final int ALARM_STATE_NOT_WORKING = 102;
     public static final int ALARM_STATE_WAITING_START = 103;
     public static final int ALARM_STATE_WAITING_STOP = 104;
     public static final int ALARM_STATE_WAITING_UPDATE = 105;
+
+    public static final int HOURS = 111;
+    public static final int MINUTES = 222;
 
     private SQLiteDatabase db = this.getWritableDatabase();
 
@@ -58,7 +68,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 COLUMN_TASK + " text," + COLUMN_COMMENT + " text," + COLUMN_DATE_STRING + " text," +
                 COLUMN_DATE_START + " long," + COLUMN_DATE_FINISH + " long" + ")");
 
-        db.execSQL("create table " + TABLE_COMPLETE + "(" + COLUMN_ID + " Long primary key," +
+        db.execSQL("create table " + TABLE_COMPLETED + "(" + COLUMN_ID + " Long primary key," +
                 COLUMN_TASK + " text," + COLUMN_COMMENT + " text," + COLUMN_DATE_STRING + " text," +
                 COLUMN_DATE_START + " long," + COLUMN_DATE_FINISH + " long" + ")");
 
@@ -75,6 +85,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 COLUMN_KEY + " text" + ")"); // COLUMN_KEY = PARENT TASK NAME
         db.execSQL("create table " + TABLE_ALARM_STATE + "(" + COLUMN_STATE + " int," + COLUMN_TIME_HOURS
                 + " int," + COLUMN_TIME_MINUTES + " int" + ")");
+        db.execSQL("create table " + TABLE_STATS + "(" + COLUMN_STATS_DATE + " long," + COLUMN_COMPLETED
+                + " int," + COLUMN_FAILED + " int" + ")");
     }
 
     @Override
@@ -82,17 +94,31 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public Long getTaskId(String task, String table){
-        Long id;
-        String[] selectionArgs = new String[] {task};
-        Cursor cursor = db.query(table, null,
-                "task = ?", selectionArgs, null, null, null);
-        if (cursor.moveToFirst())
-            id = cursor.getLong(cursor.getColumnIndex("_id"));
-        else
-            id = null;
+    public void checkTableStats(Long start, Long end) {
+        ArrayList<Long> tempSelectionArgs = new ArrayList<>();
+        for (long i = start; i <= end; i += 8.64 * Math.pow(10, 7))
+            tempSelectionArgs.add(i);
+        String[] selectionArgs = (String[]) tempSelectionArgs.toArray(new String[tempSelectionArgs.size()]);
+        Cursor cursor = db.query(TABLE_STATS, null, "stats_date = ?",
+                selectionArgs, null, null, null);
+        if (cursor.getCount() != tempSelectionArgs.size()) {
+            for (long i = start; i <= end; i += 8.64 * Math.pow(10, 7)) {
+                selectionArgs = new String[] {String.valueOf(i)};
+                cursor = db.query(TABLE_STATS, null, "stats_date = ?",
+                        selectionArgs, null, null, null);
+                if (!cursor.moveToFirst())
+                    addEmptyRowToStats(i);
+            }
+        }
         cursor.close();
-        return id;
+    }
+
+    public void addEmptyRowToStats(Long date) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_STATS_DATE, date);
+        values.put(COLUMN_COMPLETED, 0);
+        values.put(COLUMN_FAILED, 0);
+        db.insert(TABLE_STATS, null, values);
     }
 
     public int getAlarmSate(){
@@ -114,23 +140,16 @@ public class DBHelper extends SQLiteOpenHelper {
         return state;
     }
 
-    public int getAlarmHours() {
-//        int hours;
+    public int getAlarmTime(int key) {
+        int time;
         Cursor cursor = db.query(TABLE_ALARM_STATE, null, null, null,
                 null, null, null);
         cursor.moveToFirst();
-        int hours = cursor.getInt(cursor.getColumnIndex(COLUMN_TIME_HOURS));
-        cursor.close();
-        return hours;
-    }
-
-    public int getAlarmMinutes() {
-        Cursor cursor = db.query(TABLE_ALARM_STATE, null, null, null,
-                null, null, null);
-        cursor.moveToFirst();
-        int minutes = cursor.getInt(cursor.getColumnIndex(COLUMN_TIME_MINUTES));
-        cursor.close();
-        return minutes;
+        if (key == HOURS)
+            time = cursor.getInt(cursor.getColumnIndex(COLUMN_TIME_HOURS));
+        else
+            time = cursor.getInt(cursor.getColumnIndex(COLUMN_TIME_MINUTES));
+        return time;
     }
 
     public void updateAlarmState(int state){
@@ -240,7 +259,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<Task> elementsComplete(){
-        String sql = "select * from " + TABLE_COMPLETE;
+        String sql = "select * from " + TABLE_COMPLETED;
         ArrayList<Task> tempElements = new ArrayList<>();
         Cursor cursor = db.rawQuery(sql, null);
         if(cursor.moveToFirst()){
@@ -331,13 +350,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void addTableComplete(@NonNull Task item){
         ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, getFreeId(TABLE_COMPLETE));
+        values.put(COLUMN_ID, getFreeId(TABLE_COMPLETED));
         values.put(COLUMN_TASK, item.task);
         values.put(COLUMN_COMMENT, item.comment);
         values.put(COLUMN_DATE_STRING, item.dateString);
         values.put(COLUMN_DATE_START, item.dateStart);
         values.put(COLUMN_DATE_FINISH, item.dateFinish);
-        db.insert(TABLE_COMPLETE, null, values);
+        db.insert(TABLE_COMPLETED, null, values);
     }
 
     public void addTableFailed(@NonNull Task item){
@@ -386,7 +405,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void deleteCompleteTask(Long id){
-        db.delete(TABLE_COMPLETE, COLUMN_ID	+ "	= ?", new String[] { String.valueOf(id)});
+        db.delete(TABLE_COMPLETED, COLUMN_ID	+ "	= ?", new String[] { String.valueOf(id)});
     }
 
     public void deleteFaildTask(Long id){

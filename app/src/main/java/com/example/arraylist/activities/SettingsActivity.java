@@ -44,16 +44,17 @@ public class SettingsActivity extends AppCompatActivity implements TimePickerDia
             }
         });
 
+        final int hours = DBHelper.HOURS, minutes = DBHelper.MINUTES;
         TextView tvTimePickerTime = findViewById(R.id.tvTimePickerTime);
-        tvTimePickerTime.setText("После - " + dbHelper.getAlarmHours() + ":" +
-                dbHelper.getAlarmMinutes());
+        tvTimePickerTime.setText("После - " + dbHelper.getAlarmTime(hours) + ":" +
+                dbHelper.getAlarmTime(minutes));
 
         RelativeLayout timePickerButton = findViewById(R.id.timePicker);
         timePickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment timePicker = new TimePicker(dbHelper.getAlarmHours(),
-                        dbHelper.getAlarmMinutes());
+                DialogFragment timePicker = new TimePicker(dbHelper.getAlarmTime(hours),
+                        dbHelper.getAlarmTime(minutes));
                 timePicker.show(getSupportFragmentManager(), "time picker");
             }
         });

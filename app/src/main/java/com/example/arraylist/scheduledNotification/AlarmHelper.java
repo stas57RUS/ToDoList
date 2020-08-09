@@ -42,8 +42,8 @@ public class AlarmHelper {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, dbHelper.getAlarmHours());
-        calendar.set(Calendar.MINUTE, dbHelper.getAlarmMinutes());
+        calendar.set(Calendar.HOUR_OF_DAY, dbHelper.getAlarmTime(DBHelper.HOURS));
+        calendar.set(Calendar.MINUTE, dbHelper.getAlarmTime(DBHelper.MINUTES));
 
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, pendingIntent);
