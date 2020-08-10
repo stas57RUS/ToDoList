@@ -21,11 +21,13 @@ import com.example.arraylist.items.Subtask;
 import com.example.arraylist.items.Task;
 import com.example.arraylist.R;
 import com.example.arraylist.activities.AddActivity;
+import com.example.arraylist.other.setZeroTimeDate;
 import com.thoughtbot.expandablerecyclerview.MultiTypeExpandableRecyclerViewAdapter;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
 import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import static android.view.animation.Animation.RELATIVE_TO_SELF;
 
@@ -185,6 +187,8 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
                             dbHelper.addTableComplete(task);
                             dbHelper.deleteHomeTask(task.id);
                             remove(getAdapterPosition());
+                            dbHelper.addNewStats(new setZeroTimeDate().transform(new Date()).getTime(),
+                                    DBHelper.STATS_TYPE_COMPLETED);
                         }
                     }
                 });

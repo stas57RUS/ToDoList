@@ -13,6 +13,7 @@ import com.example.arraylist.DB.DBHelper;
 import com.example.arraylist.adapters.MultiTypeTaskAdapter;
 import com.example.arraylist.R;
 import com.example.arraylist.other.TaskTimeChecker;
+import com.example.arraylist.other.setZeroTimeDate;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -24,7 +25,6 @@ public class FragmentPlanned extends Fragment {
 
     private DBHelper dbHelper;
     private RecyclerView recyclerView;
-    private MultiTypeTaskAdapter adapter;
 
     public FragmentPlanned() {
         // Required empty public constructor
@@ -48,24 +48,13 @@ public class FragmentPlanned extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        TaskTimeChecker taskTimeChecker = new TaskTimeChecker(setZeroTimeDate(new Date()).getTime(),
-                getContext());
+        TaskTimeChecker taskTimeChecker = new TaskTimeChecker(new setZeroTimeDate().transform(new Date())
+                .getTime(), getContext());
         taskTimeChecker.checkPlannedTasks();
         taskTimeChecker.checkActiveTasks();
 
-        adapter = new MultiTypeTaskAdapter(dbHelper.elementsPlanned(),
+        MultiTypeTaskAdapter adapter = new MultiTypeTaskAdapter(dbHelper.elementsPlanned(),
                 MultiTypeTaskAdapter.PARENT_PLANNED, getContext());
         recyclerView.setAdapter(adapter);
-    }
-
-    private Date setZeroTimeDate(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        date = calendar.getTime();
-        return date;
     }
 }

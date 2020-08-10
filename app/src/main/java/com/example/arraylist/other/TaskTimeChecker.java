@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import com.example.arraylist.DB.DBHelper;
 import com.example.arraylist.items.Task;
 
+import java.util.Date;
+
 public class TaskTimeChecker {
     Long today;
     DBHelper dbHelper;
@@ -55,6 +57,8 @@ public class TaskTimeChecker {
                         cursor.getLong(cursor.getColumnIndex("date_finish")),
                         null));
                 dbHelper.deleteHomeTask(cursor.getLong(cursor.getColumnIndex("_id")));
+                dbHelper.addNewStats(new setZeroTimeDate().transform(new Date()).getTime(),
+                        DBHelper.STATS_TYPE_FAILED);
             } while (cursor.moveToNext());
         }
         cursor.close();

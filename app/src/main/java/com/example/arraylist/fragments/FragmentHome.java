@@ -17,6 +17,7 @@ import com.example.arraylist.adapters.MultiTypeTaskAdapter;
 import com.example.arraylist.R;
 import com.example.arraylist.other.TaskTimeChecker;
 import com.example.arraylist.activities.AddActivity;
+import com.example.arraylist.other.setZeroTimeDate;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -63,7 +64,8 @@ public class FragmentHome extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        TaskTimeChecker taskTimeChecker = new TaskTimeChecker(setZeroTimeDate(new Date()).getTime(),
+        TaskTimeChecker taskTimeChecker = new TaskTimeChecker(new setZeroTimeDate().transform(new Date())
+                .getTime(),
                 getContext());
         taskTimeChecker.checkPlannedTasks();
         taskTimeChecker.checkActiveTasks();
@@ -71,16 +73,5 @@ public class FragmentHome extends Fragment {
         adapter = new MultiTypeTaskAdapter(dbHelper.elementsHome(),
                 MultiTypeTaskAdapter.PARENT_HOME, getContext());
         recyclerView.setAdapter(adapter);
-    }
-
-    private Date setZeroTimeDate(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        date = calendar.getTime();
-        return date;
     }
 }

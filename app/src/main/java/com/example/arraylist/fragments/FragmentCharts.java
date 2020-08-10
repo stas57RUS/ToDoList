@@ -14,12 +14,15 @@ import android.widget.Spinner;
 import com.example.arraylist.R;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.util.ArrayList;
@@ -68,6 +71,7 @@ public class FragmentCharts extends Fragment{
         lineChart.setDragEnabled(true);
         lineChart.setScaleEnabled(false);
         lineChart.getDescription().setEnabled(false);
+        lineChart.getAxisRight().setEnabled(false);
 
         ArrayList<ILineDataSet> dataLists = new ArrayList<>();
 
@@ -79,30 +83,6 @@ public class FragmentCharts extends Fragment{
         templst.add(new Entry(5, 1));
         templst.add(new Entry(6, 6));
         templst.add(new Entry(7, 5));
-        templst.add(new Entry(8, 2));
-        templst.add(new Entry(9, 0));
-        templst.add(new Entry(10, 10));
-        templst.add(new Entry(11, 1));
-        templst.add(new Entry(12, 6));
-        templst.add(new Entry(13, 5));
-        templst.add(new Entry(14, 2));
-        templst.add(new Entry(15, 0));
-        templst.add(new Entry(16, 10));
-        templst.add(new Entry(17, 1));
-        templst.add(new Entry(18, 6));
-        templst.add(new Entry(19, 5));
-        templst.add(new Entry(20, 2));
-        templst.add(new Entry(21, 0));
-        templst.add(new Entry(22, 10));
-        templst.add(new Entry(23, 1));
-        templst.add(new Entry(24, 6));
-        templst.add(new Entry(25, 5));
-        templst.add(new Entry(26, 2));
-        templst.add(new Entry(27, 0));
-        templst.add(new Entry(28, 10));
-        templst.add(new Entry(29, 1));
-        templst.add(new Entry(30, 6));
-        templst.add(new Entry(31, 8));
 
         LineDataSet lineDataSet = new LineDataSet(templst, "Выполненные");
         lineDataSet.setColors(Color.RED);
@@ -117,30 +97,6 @@ public class FragmentCharts extends Fragment{
         templst1.add(new Entry(5, 7));
         templst1.add(new Entry(6, 5));
         templst1.add(new Entry(7, 4));
-        templst1.add(new Entry(8, 2));
-        templst1.add(new Entry(9, 4));
-        templst1.add(new Entry(10, 9));
-        templst1.add(new Entry(11, 7));
-        templst1.add(new Entry(12, 5));
-        templst1.add(new Entry(13, 4));
-        templst1.add(new Entry(14, 2));
-        templst1.add(new Entry(15, 4));
-        templst1.add(new Entry(16, 9));
-        templst1.add(new Entry(17, 7));
-        templst1.add(new Entry(18, 5));
-        templst1.add(new Entry(19, 4));
-        templst1.add(new Entry(20, 2));
-        templst1.add(new Entry(21, 4));
-        templst1.add(new Entry(22, 9));
-        templst1.add(new Entry(23, 7));
-        templst1.add(new Entry(24, 5));
-        templst1.add(new Entry(25, 4));
-        templst1.add(new Entry(26, 2));
-        templst1.add(new Entry(27, 4));
-        templst1.add(new Entry(28, 9));
-        templst1.add(new Entry(29, 7));
-        templst1.add(new Entry(30, 5));
-        templst.add(new Entry(31, 6));
 
         LineDataSet lineDataSet1 = new LineDataSet(templst1, "Невыполненные");
         lineDataSet1.setLineWidth(2.5f);
@@ -150,6 +106,18 @@ public class FragmentCharts extends Fragment{
         LineData data = new LineData(dataLists);
 
         lineChart.setData(data);
+
+        XAxis xAxis = lineChart.getXAxis();
+        xAxis.setValueFormatter(new axisValueFormatter());
+
         return view;
+    }
+
+    public class axisValueFormatter implements IAxisValueFormatter {
+
+        @Override
+        public String getFormattedValue(float value, AxisBase axis) {
+            return "Day" + (int) value;
+        }
     }
 }

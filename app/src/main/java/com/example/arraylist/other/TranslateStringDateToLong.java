@@ -8,10 +8,10 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-public class DateCutter {
+public class TranslateStringDateToLong {
     String headerText;
 
-    public DateCutter(@NonNull String headerText) {
+    public TranslateStringDateToLong(@NonNull String headerText) {
         this.headerText = headerText;
     }
 

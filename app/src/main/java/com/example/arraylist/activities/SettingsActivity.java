@@ -44,7 +44,7 @@ public class SettingsActivity extends AppCompatActivity implements TimePickerDia
             }
         });
 
-        final int hours = DBHelper.HOURS, minutes = DBHelper.MINUTES;
+        final int hours = DBHelper.ALARM_HOURS, minutes = DBHelper.ALARM_MINUTES;
         TextView tvTimePickerTime = findViewById(R.id.tvTimePickerTime);
         tvTimePickerTime.setText("После - " + dbHelper.getAlarmTime(hours) + ":" +
                 dbHelper.getAlarmTime(minutes));

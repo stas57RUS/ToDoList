@@ -14,11 +14,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.arraylist.DB.DBHelper;
-import com.example.arraylist.other.DateCutter;
+import com.example.arraylist.other.TranslateStringDateToLong;
 import com.example.arraylist.R;
 import com.example.arraylist.items.Subtask;
 import com.example.arraylist.adapters.SubtaskAdapter;
 import com.example.arraylist.items.Task;
+import com.example.arraylist.other.setZeroTimeDate;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -27,7 +28,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -75,7 +75,7 @@ public class AddActivity extends AppCompatActivity {
             String dateSelected = formatter.format(currentDate) + " – " + formatter.format(currentDate);
             tvDate.setText(dateSelected);
             //Date
-            today = setZeroTimeDate(new Date()).getTime();
+            today = new setZeroTimeDate().transform(new Date()).getTime();
 
             CalendarConstraints.Builder constraintBuilder = new CalendarConstraints.Builder();
             constraintBuilder.setValidator(DateValidatorPointForward.now());
@@ -189,24 +189,13 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
-    private Date setZeroTimeDate(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        date = calendar.getTime();
-        return date;
-    }
-
     private Task getData() {
         TextView tvTask = findViewById(R.id.task),
                 tvComment = findViewById(R.id.comment);
         Long firstDate = null, secondDate = null;
 
         String dateSelected = tvDate.getText().toString();
-        DateCutter dateCutter = new DateCutter(dateSelected);
+        TranslateStringDateToLong dateCutter = new TranslateStringDateToLong(dateSelected);
         try {
             firstDate = dateCutter.getFirst();
         } catch (ParseException e) {

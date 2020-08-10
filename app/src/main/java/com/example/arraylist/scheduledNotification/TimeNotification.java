@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -15,6 +14,7 @@ import androidx.core.app.NotificationManagerCompat;
 import com.example.arraylist.DB.DBHelper;
 import com.example.arraylist.R;
 import com.example.arraylist.activities.MainActivity;
+import com.example.arraylist.other.setZeroTimeDate;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -25,8 +25,10 @@ public class TimeNotification extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         int count = 0;
         DBHelper dbHelper = new DBHelper(context);
-        count += dbHelper.newActiveTasks(setZeroTimeDate(new Date()).getTime(), DBHelper.TABLE_PLANNED);
-        count += dbHelper.newActiveTasks(setZeroTimeDate(new Date()).getTime(), DBHelper.TABLE_HOME);
+        count += dbHelper.newActiveTasks(new setZeroTimeDate().transform(new Date())
+                .getTime(), DBHelper.TABLE_PLANNED);
+        count += dbHelper.newActiveTasks(new setZeroTimeDate().transform(new Date())
+                .getTime(), DBHelper.TABLE_HOME);
 
         createNotificationChannel(context);
 
@@ -79,16 +81,5 @@ public class TimeNotification extends BroadcastReceiver {
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(notificationChannel);
         }
-    }
-
-    private Date setZeroTimeDate(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        date = calendar.getTime();
-        return date;
     }
 }

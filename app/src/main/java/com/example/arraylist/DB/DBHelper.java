@@ -44,8 +44,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TIME_MINUTES = "time_minutes";
 
     public static final String COLUMN_STATS_DATE = "stats_date";
-    public static final String COLUMN_COMPLETED = "completed";
-    public static final String COLUMN_FAILED = "failed";
+    public static final String COLUMN_COM_OR_FAIL = "completed_or_faoled";
 
     public static final int ALARM_STATE_RUNNING = 101;
     public static final int ALARM_STATE_NOT_WORKING = 102;
@@ -53,8 +52,11 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final int ALARM_STATE_WAITING_STOP = 104;
     public static final int ALARM_STATE_WAITING_UPDATE = 105;
 
-    public static final int HOURS = 111;
-    public static final int MINUTES = 222;
+    public static final int ALARM_HOURS = 111;
+    public static final int ALARM_MINUTES = 222;
+
+    public static final int STATS_TYPE_COMPLETED = 333;
+    public static final int STATS_TYPE_FAILED = 444;
 
     private SQLiteDatabase db = this.getWritableDatabase();
 
@@ -85,8 +87,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 COLUMN_KEY + " text" + ")"); // COLUMN_KEY = PARENT TASK NAME
         db.execSQL("create table " + TABLE_ALARM_STATE + "(" + COLUMN_STATE + " int," + COLUMN_TIME_HOURS
                 + " int," + COLUMN_TIME_MINUTES + " int" + ")");
-        db.execSQL("create table " + TABLE_STATS + "(" + COLUMN_STATS_DATE + " long," + COLUMN_COMPLETED
-                + " int," + COLUMN_FAILED + " int" + ")");
+        db.execSQL("create table " + TABLE_STATS + "(" + COLUMN_STATS_DATE + " long," + COLUMN_COM_OR_FAIL
+                + " int" + ")");
     }
 
     @Override
@@ -94,32 +96,39 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public void checkTableStats(Long start, Long end) {
-        ArrayList<Long> tempSelectionArgs = new ArrayList<>();
-        for (long i = start; i <= end; i += 8.64 * Math.pow(10, 7))
-            tempSelectionArgs.add(i);
-        String[] selectionArgs = (String[]) tempSelectionArgs.toArray(new String[tempSelectionArgs.size()]);
-        Cursor cursor = db.query(TABLE_STATS, null, "stats_date = ?",
-                selectionArgs, null, null, null);
-        if (cursor.getCount() != tempSelectionArgs.size()) {
-            for (long i = start; i <= end; i += 8.64 * Math.pow(10, 7)) {
-                selectionArgs = new String[] {String.valueOf(i)};
-                cursor = db.query(TABLE_STATS, null, "stats_date = ?",
-                        selectionArgs, null, null, null);
-                if (!cursor.moveToFirst())
-                    addEmptyRowToStats(i);
-            }
-        }
-        cursor.close();
-    }
-
-    public void addEmptyRowToStats(Long date) {
+    public void addNewStats(Long date, int statsType) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_STATS_DATE, date);
-        values.put(COLUMN_COMPLETED, 0);
-        values.put(COLUMN_FAILED, 0);
+        values.put(COLUMN_COM_OR_FAIL, statsType);
         db.insert(TABLE_STATS, null, values);
     }
+
+//    public void checkTableStats(Long start, Long end) {
+//        ArrayList<Long> tempSelectionArgs = new ArrayList<>();
+//        for (long i = start; i <= end; i += 8.64 * Math.pow(10, 7))
+//            tempSelectionArgs.add(i);
+//        String[] selectionArgs = (String[]) tempSelectionArgs.toArray(new String[tempSelectionArgs.size()]);
+//        Cursor cursor = db.query(TABLE_STATS, null, "stats_date = ?",
+//                selectionArgs, null, null, null);
+//        if (cursor.getCount() != tempSelectionArgs.size()) {
+//            for (long i = start; i <= end; i += 8.64 * Math.pow(10, 7)) {
+//                selectionArgs = new String[] {String.valueOf(i)};
+//                cursor = db.query(TABLE_STATS, null, "stats_date = ?",
+//                        selectionArgs, null, null, null);
+//                if (!cursor.moveToFirst())
+//                    addEmptyRowToStats(i);
+//            }
+//        }
+//        cursor.close();
+//    }
+//
+//    public void addEmptyRowToStats(Long date) {
+//        ContentValues values = new ContentValues();
+//        values.put(COLUMN_STATS_DATE, date);
+//        values.put(COLUMN_COMPLETED, 0);
+//        values.put(COLUMN_FAILED, 0);
+//        db.insert(TABLE_STATS, null, values);
+//    }
 
     public int getAlarmSate(){
         int state;
@@ -145,7 +154,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_ALARM_STATE, null, null, null,
                 null, null, null);
         cursor.moveToFirst();
-        if (key == HOURS)
+        if (key == ALARM_HOURS)
             time = cursor.getInt(cursor.getColumnIndex(COLUMN_TIME_HOURS));
         else
             time = cursor.getInt(cursor.getColumnIndex(COLUMN_TIME_MINUTES));
