@@ -1,5 +1,6 @@
 package com.example.arraylist.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -8,8 +9,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.arraylist.DB.DBHelper;
+import com.example.arraylist.activities.AddActivity;
 import com.example.arraylist.adapters.MultiTypeTaskAdapter;
 import com.example.arraylist.R;
 import com.example.arraylist.other.TaskTimeChecker;
@@ -24,7 +28,8 @@ public class FragmentComplete extends Fragment {
 
     private DBHelper dbHelper;
     private RecyclerView recyclerView;
-    private MultiTypeTaskAdapter adapter;
+    private TextView textView;
+
 
     public FragmentComplete() {
         // Required empty public constructor
@@ -33,7 +38,7 @@ public class FragmentComplete extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_completed, container, false);
+        View view = inflater.inflate(R.layout.fragment_for_tasks, container, false);
 
         dbHelper = new DBHelper(getContext());
         recyclerView = view.findViewById(R.id.recyclerView);
@@ -41,6 +46,18 @@ public class FragmentComplete extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         RecyclerView.ItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(divider);
+
+        ImageButton imageButton = view.findViewById(R.id.imageButton);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), AddActivity.class);
+                intent.putExtra("type", AddActivity.TYPE_ADD);
+                startActivity(intent);
+            }
+        });
+
+        textView = view.findViewById(R.id.textView);
 
         return view;
     }
@@ -53,8 +70,14 @@ public class FragmentComplete extends Fragment {
         taskTimeChecker.checkPlannedTasks();
         taskTimeChecker.checkActiveTasks();
 
-        adapter = new MultiTypeTaskAdapter(dbHelper.elementsComplete(),
+        MultiTypeTaskAdapter adapter = new MultiTypeTaskAdapter(dbHelper.elementsComplete(),
                 MultiTypeTaskAdapter.PARENT_COMPLETED, getContext());
         recyclerView.setAdapter(adapter);
+        if (dbHelper.elementsComplete().size() != 0)
+            textView.setVisibility(View.GONE);
+        else {
+            textView.setText("Нет выполненных задач.");
+            textView.setVisibility(View.VISIBLE);
+        }
     }
 }

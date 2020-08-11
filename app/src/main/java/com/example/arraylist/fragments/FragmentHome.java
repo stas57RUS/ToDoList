@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.arraylist.DB.DBHelper;
 import com.example.arraylist.adapters.MultiTypeTaskAdapter;
@@ -29,8 +30,7 @@ public class FragmentHome extends Fragment {
 
     private DBHelper dbHelper;
     private RecyclerView recyclerView;
-    private ImageButton imageButton;
-    private MultiTypeTaskAdapter adapter;
+    private TextView textView;
 
     public FragmentHome() {
         // Required empty public constructor
@@ -39,9 +39,16 @@ public class FragmentHome extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_for_tasks, container, false);
 
-        imageButton = view.findViewById(R.id.imageButton);
+        dbHelper = new DBHelper(getContext());
+        recyclerView = view.findViewById(R.id.recyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        RecyclerView.ItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(divider);
+
+        ImageButton imageButton = view.findViewById(R.id.imageButton);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,12 +58,7 @@ public class FragmentHome extends Fragment {
             }
         });
 
-        dbHelper = new DBHelper(getContext());
-        recyclerView = view.findViewById(R.id.recyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
-        RecyclerView.ItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
-        recyclerView.addItemDecoration(divider);
+        textView = view.findViewById(R.id.textView);
 
         return view;
     }
@@ -70,8 +72,14 @@ public class FragmentHome extends Fragment {
         taskTimeChecker.checkPlannedTasks();
         taskTimeChecker.checkActiveTasks();
 
-        adapter = new MultiTypeTaskAdapter(dbHelper.elementsHome(),
+        MultiTypeTaskAdapter adapter = new MultiTypeTaskAdapter(dbHelper.elementsHome(),
                 MultiTypeTaskAdapter.PARENT_HOME, getContext());
         recyclerView.setAdapter(adapter);
+        if (dbHelper.elementsHome().size() != 0)
+            textView.setVisibility(View.GONE);
+        else {
+            textView.setText("Нет текущих задач.");
+            textView.setVisibility(View.VISIBLE);
+        }
     }
 }
