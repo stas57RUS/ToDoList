@@ -41,6 +41,7 @@ import java.util.Date;
 public class FragmentCharts extends Fragment{
     private CompletedTasks completedTasks;
     private FailedTasks failedTasks;
+    long ONE_DAY_MILLIS = 86400000L;
 
     public FragmentCharts() {
         // Required empty public constructor
@@ -50,12 +51,11 @@ public class FragmentCharts extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_charts, container, false);
 
-        long ONE_DAY_MILLIS = 86400000L;
         long today = new setZeroTimeDate().transform(new Date()).getTime();
         DBHelper dbHelper = new DBHelper(getContext());
-        completedTasks = dbHelper.getCompletedStats(today - ONE_DAY_MILLIS * 7,
+        completedTasks = dbHelper.getCompletedStats(today - ONE_DAY_MILLIS * 6,
                 today);
-        failedTasks = dbHelper.getFailedStats(today - ONE_DAY_MILLIS * 7,
+        failedTasks = dbHelper.getFailedStats(today - ONE_DAY_MILLIS * 6,
                 today);
 
         TextView tvAllTasks = view.findViewById(R.id.allTasks);
@@ -141,7 +141,7 @@ public class FragmentCharts extends Fragment{
         lineChart.setData(data);
 
         XAxis xAxis = lineChart.getXAxis();
-        xAxis.setGranularity(1f);
+        xAxis.setLabelCount(7, true);
         xAxis.setValueFormatter(new axisValueFormatter());
 
         return view;
@@ -157,7 +157,7 @@ public class FragmentCharts extends Fragment{
 
         @Override
         public String getFormattedValue(float value, AxisBase axis) {
-            return new SimpleDateFormat("dd/MM").format(new Date((long) value));
+            return new SimpleDateFormat("dd/MM").format(new Date((long) value + ONE_DAY_MILLIS));
         }
     }
 }
