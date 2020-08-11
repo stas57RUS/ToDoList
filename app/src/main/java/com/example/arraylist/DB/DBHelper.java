@@ -5,14 +5,19 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.arraylist.items.CompletedTasks;
+import com.example.arraylist.items.FailedTasks;
 import com.example.arraylist.items.Subtask;
 import com.example.arraylist.items.Task;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -44,7 +49,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TIME_MINUTES = "time_minutes";
 
     public static final String COLUMN_STATS_DATE = "stats_date";
-    public static final String COLUMN_COM_OR_FAIL = "completed_or_faoled";
+    public static final String COLUMN_COM_OR_FAIL = "completed_or_failed";
 
     public static final int ALARM_STATE_RUNNING = 101;
     public static final int ALARM_STATE_NOT_WORKING = 102;
@@ -85,8 +90,10 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("create table " + TABLE_SUBTASKS + "(" + COLUMN_ID + " Long primary key," +
                 COLUMN_SUBTASKS + " text," + COLUMN_CHECKED + " boolean," +
                 COLUMN_KEY + " text" + ")"); // COLUMN_KEY = PARENT TASK NAME
+
         db.execSQL("create table " + TABLE_ALARM_STATE + "(" + COLUMN_STATE + " int," + COLUMN_TIME_HOURS
                 + " int," + COLUMN_TIME_MINUTES + " int" + ")");
+
         db.execSQL("create table " + TABLE_STATS + "(" + COLUMN_STATS_DATE + " long," + COLUMN_COM_OR_FAIL
                 + " int" + ")");
     }
@@ -103,32 +110,43 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(TABLE_STATS, null, values);
     }
 
-//    public void checkTableStats(Long start, Long end) {
-//        ArrayList<Long> tempSelectionArgs = new ArrayList<>();
-//        for (long i = start; i <= end; i += 8.64 * Math.pow(10, 7))
-//            tempSelectionArgs.add(i);
-//        String[] selectionArgs = (String[]) tempSelectionArgs.toArray(new String[tempSelectionArgs.size()]);
-//        Cursor cursor = db.query(TABLE_STATS, null, "stats_date = ?",
-//                selectionArgs, null, null, null);
-//        if (cursor.getCount() != tempSelectionArgs.size()) {
-//            for (long i = start; i <= end; i += 8.64 * Math.pow(10, 7)) {
-//                selectionArgs = new String[] {String.valueOf(i)};
-//                cursor = db.query(TABLE_STATS, null, "stats_date = ?",
-//                        selectionArgs, null, null, null);
-//                if (!cursor.moveToFirst())
-//                    addEmptyRowToStats(i);
-//            }
-//        }
-//        cursor.close();
-//    }
-//
-//    public void addEmptyRowToStats(Long date) {
-//        ContentValues values = new ContentValues();
-//        values.put(COLUMN_STATS_DATE, date);
-//        values.put(COLUMN_COMPLETED, 0);
-//        values.put(COLUMN_FAILED, 0);
-//        db.insert(TABLE_STATS, null, values);
-//    }
+    public CompletedTasks getCompletedStats(Long dateStart, Long dateFinish) {
+        ArrayList<Long> dates = new ArrayList<>();
+        ArrayList<Integer> countPerDay = new ArrayList<>();
+        Long ONE_DAY_MILLIS = 86400000L;
+        for (long date = dateStart; date <= dateFinish; date += ONE_DAY_MILLIS) {
+            String[] selectionArgs = new String[] {String.valueOf(date), String.valueOf(STATS_TYPE_COMPLETED)};
+            Cursor cursor = db.query(TABLE_STATS, null,
+                    "stats_date = ? AND completed_or_failed = ?", selectionArgs,
+                    null, null, null);
+            if (cursor.moveToFirst())
+                countPerDay.add(cursor.getCount());
+            else
+                countPerDay.add(0);
+            cursor.close();
+            dates.add(date);
+        }
+        return new CompletedTasks(dates, countPerDay);
+    }
+
+    public FailedTasks getFailedStats(Long dateStart, Long dateFinish) {
+        ArrayList<Long> dates = new ArrayList<>();
+        ArrayList<Integer> countPerDay = new ArrayList<>();
+        Long ONE_DAY_MILLIS = 86400000L;
+        for (long date = dateStart; date <= dateFinish; date += ONE_DAY_MILLIS) {
+            String[] selectionArgs = new String[]{String.valueOf(date), String.valueOf(STATS_TYPE_FAILED)};
+            Cursor cursor = db.query(TABLE_STATS, null,
+                    "stats_date = ? AND completed_or_failed = ?", selectionArgs,
+                    null, null, null);
+            if (cursor.moveToFirst())
+                countPerDay.add(cursor.getCount());
+            else
+                countPerDay.add(0);
+            cursor.close();
+            dates.add(date);
+        }
+        return new FailedTasks(dates, countPerDay);
+    }
 
     public int getAlarmSate(){
         int state;

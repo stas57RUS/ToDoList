@@ -12,14 +12,9 @@ public class Task extends ExpandableGroup {
     public String dateString;
     public Long dateStart, dateFinish;
     public ArrayList<Subtask> subtasks;
-//
-//    public Task(String title, List items) {
-//        super(title, items);
-//    }
 
     public Task(Long id, String task, String comment, String dateString,
                 Long dateStart, Long dateFinish, ArrayList<Subtask> subtasks) {
-                //List items) {
         super(task, subtasks);
         this.id = id;
         this.task = task;
