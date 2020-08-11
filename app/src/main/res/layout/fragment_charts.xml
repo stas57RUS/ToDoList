@@ -75,4 +75,11 @@
         android:layout_marginTop="20dp"
         android:layout_below="@id/pieChart"/>
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Недостаточно данных."/>
+
 </RelativeLayout>
