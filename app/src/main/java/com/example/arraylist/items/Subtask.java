@@ -16,7 +16,7 @@ public class Subtask implements Parcelable {
         this.task = task;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
+    @RequiresApi(api = Build.VERSION_CODES.P)
     protected Subtask(Parcel in) {
         if (in.readByte() == 0) {
             id = null;
@@ -27,7 +27,7 @@ public class Subtask implements Parcelable {
     }
 
     public static final Creator<Subtask> CREATOR = new Creator<Subtask>() {
-        @RequiresApi(api = Build.VERSION_CODES.Q)
+        @RequiresApi(api = Build.VERSION_CODES.P)
         @Override
         public Subtask createFromParcel(Parcel in) {
             return new Subtask(in);
@@ -44,7 +44,7 @@ public class Subtask implements Parcelable {
         return 0;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
+    @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(task);

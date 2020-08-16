@@ -228,20 +228,20 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
             }
         }
 
-        @Override
-        public void collapse() {
-            if (viewType == 3 || viewType == 6 || viewType == 7 ||
-                    viewType == 9){
-                animateCollapse();
-            }
-        }
-
         private void animateExpand() {
             RotateAnimation rotate =
                     new RotateAnimation(360, 180, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
             rotate.setDuration(300);
             rotate.setFillAfter(true);
             arrow.setAnimation(rotate);
+        }
+
+        @Override
+        public void collapse() {
+            if (viewType == 3 || viewType == 6 || viewType == 7 ||
+                    viewType == 9){
+                animateCollapse();
+            }
         }
 
         private void animateCollapse() {

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -19,9 +20,13 @@ import com.example.arraylist.R;
 import com.example.arraylist.other.TaskTimeChecker;
 import com.example.arraylist.activities.AddActivity;
 import com.example.arraylist.other.setZeroTimeDate;
+import com.thoughtbot.expandablerecyclerview.listeners.GroupExpandCollapseListener;
+import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
 import java.util.Calendar;
 import java.util.Date;
+
+import static android.view.animation.Animation.RELATIVE_TO_SELF;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -72,7 +77,7 @@ public class FragmentHome extends Fragment {
         taskTimeChecker.checkPlannedTasks();
         taskTimeChecker.checkActiveTasks();
 
-        MultiTypeTaskAdapter adapter = new MultiTypeTaskAdapter(dbHelper.elementsHome(),
+        final MultiTypeTaskAdapter adapter = new MultiTypeTaskAdapter(dbHelper.elementsHome(),
                 MultiTypeTaskAdapter.PARENT_HOME, getContext());
         recyclerView.setAdapter(adapter);
         if (dbHelper.elementsHome().size() != 0)
