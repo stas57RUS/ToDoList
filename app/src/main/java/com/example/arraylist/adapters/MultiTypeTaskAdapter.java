@@ -219,38 +219,6 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
             groups.remove(position);
             notifyDataSetChanged();
         }
-
-        @Override
-        public void expand() {
-            if (viewType == 3 || viewType == 6 || viewType == 7 ||
-                    viewType == 9){
-                animateExpand();
-            }
-        }
-
-        private void animateExpand() {
-            RotateAnimation rotate =
-                    new RotateAnimation(360, 180, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
-            rotate.setDuration(300);
-            rotate.setFillAfter(true);
-            arrow.setAnimation(rotate);
-        }
-
-        @Override
-        public void collapse() {
-            if (viewType == 3 || viewType == 6 || viewType == 7 ||
-                    viewType == 9){
-                animateCollapse();
-            }
-        }
-
-        private void animateCollapse() {
-            RotateAnimation rotate =
-                    new RotateAnimation(180, 360, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
-            rotate.setDuration(300);
-            rotate.setFillAfter(true);
-            arrow.setAnimation(rotate);
-        }
     }
 
     class SubtaskViewHolder extends ChildViewHolder {
