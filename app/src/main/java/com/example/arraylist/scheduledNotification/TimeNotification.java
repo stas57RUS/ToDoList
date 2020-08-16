@@ -16,7 +16,6 @@ import com.example.arraylist.R;
 import com.example.arraylist.activities.MainActivity;
 import com.example.arraylist.other.setZeroTimeDate;
 
-import java.util.Calendar;
 import java.util.Date;
 
 public class TimeNotification extends BroadcastReceiver {
@@ -28,7 +27,7 @@ public class TimeNotification extends BroadcastReceiver {
         count += dbHelper.newActiveTasks(new setZeroTimeDate().transform(new Date())
                 .getTime(), DBHelper.TABLE_PLANNED);
         count += dbHelper.newActiveTasks(new setZeroTimeDate().transform(new Date())
-                .getTime(), DBHelper.TABLE_HOME);
+                .getTime(), DBHelper.TABLE_ACTIVE);
 
         createNotificationChannel(context);
 

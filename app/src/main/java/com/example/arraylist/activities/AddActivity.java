@@ -10,7 +10,6 @@ import android.os.Bundle;
 import androidx.core.util.Pair;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,7 +36,6 @@ import java.util.Locale;
 public class AddActivity extends AppCompatActivity {
 
     private DBHelper dbHelper;
-    private SQLiteDatabase db;
     private SubtaskAdapter adapter;
     private TextView tvDate;
     private Long today;
@@ -65,7 +63,7 @@ public class AddActivity extends AppCompatActivity {
 
         int type = getIntent().getExtras().getInt("type");
 
-        db = dbHelper.getWritableDatabase();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
         if (type == TYPE_ADD) {
             ArrayList<String> subtasksRange = new ArrayList<>();
             subtasksRange.add("");
@@ -114,10 +112,10 @@ public class AddActivity extends AppCompatActivity {
                     Task task = getData();
                     if (!task.task.equals("")) {
                         if (task.dateStart.equals(today))
-                            dbHelper.addTableHome(task);
+                            dbHelper.addTask(task, DBHelper.TABLE_ACTIVE);
                         else
-                            dbHelper.addTablePlanned(task);
-                        dbHelper.addTableSubtasks(task.subtasks, task.task);
+                            dbHelper.addTask(task, DBHelper.TABLE_ACTIVE);
+                        dbHelper.addSubtasks(task.subtasks, task.task);
                     }
                     finish();
                 }
@@ -181,13 +179,13 @@ public class AddActivity extends AppCompatActivity {
                     Task taskAfterChanges = getData();
 
                     if (taskAfterChanges.task.equals("")) {
-                        dbHelper.deletePlannedTask(taskBeforeChanges.id);
+                        dbHelper.deleteTask(taskBeforeChanges.id, DBHelper.TABLE_PLANNED);
                         dbHelper.deleteSubtasks(dbHelper.getSubtasksIDS(taskBeforeChanges.subtasks));
                     }
                     else {
-                        dbHelper.deletePlannedTask(taskBeforeChanges.id);
+                        dbHelper.deleteTask(taskBeforeChanges.id, DBHelper.TABLE_PLANNED);
                         dbHelper.deleteSubtasks(dbHelper.getSubtasksIDS(taskBeforeChanges.subtasks));
-                        dbHelper.addTablePlanned(taskAfterChanges);
+                        dbHelper.addTask(taskAfterChanges, DBHelper.TABLE_PLANNED);
                     }
                     finish();
                 }

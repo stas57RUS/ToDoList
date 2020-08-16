@@ -18,8 +18,9 @@
         android:layout_alignParentBottom="true"
         android:clickable="true"
         android:src="@drawable/ic_add"
-        android:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="@color/colorAccent"
         app:tint="@color/white"
+        app:borderWidth="0dp"
         android:focusable="true"
         android:layout_marginRight="11dp"
         android:layout_marginBottom="16dp"/>

@@ -45,7 +45,7 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
     public static final int TYPE_ISNT_CHECKBOX_ISNT_COMMENT_IS_SUBTASKS = 9;
     public static final int TYPE_ISNT_CHECKBOX_ISNT_COMMENT_ISNT_SUBTASKS = 10;
 
-    public static final int PARENT_HOME = 13;
+    public static final int PARENT_ACTIVE = 13;
     public static final int PARENT_COMPLETED = 14;
     public static final int PARENT_FAILED = 15;
     public static final int PARENT_PLANNED = 16;
@@ -111,8 +111,8 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
                 @Override
                 public void onClick(View v) {
                     switch (parent){
-                        case MultiTypeTaskAdapter.PARENT_HOME:
-                            deleteTask(v, PARENT_HOME);
+                        case MultiTypeTaskAdapter.PARENT_ACTIVE:
+                            deleteTask(v, PARENT_ACTIVE);
                             break;
                         case MultiTypeTaskAdapter.PARENT_COMPLETED:
                             deleteTask(v, PARENT_COMPLETED);
@@ -157,17 +157,17 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
 
                     DBHelper dbHelper = new DBHelper(v.getContext());
                     switch (parent) {
-                        case PARENT_HOME:
-                            dbHelper.deleteHomeTask(task.id);
+                        case PARENT_ACTIVE:
+                            dbHelper.deleteTask(task.id, DBHelper.TABLE_ACTIVE);
                             break;
                         case PARENT_COMPLETED:
-                            dbHelper.deleteCompleteTask(task.id);
+                            dbHelper.deleteTask(task.id, DBHelper.TABLE_COMPLETED);
                             break;
                         case PARENT_FAILED:
-                            dbHelper.deleteFaildTask(task.id);
+                            dbHelper.deleteTask(task.id, DBHelper.TABLE_FAILED);
                             break;
                         case PARENT_PLANNED:
-                            dbHelper.deletePlannedTask(task.id);
+                            dbHelper.deleteTask(task.id, DBHelper.TABLE_PLANNED);
                             break;
                     }
                     dbHelper.deleteSubtasks(ids);
@@ -182,8 +182,8 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
                     public void onClick(View v) {
                         if (checkBox.isChecked()){
                             DBHelper dbHelper = new DBHelper(v.getContext());
-                            dbHelper.addTableComplete(task);
-                            dbHelper.deleteHomeTask(task.id);
+                            dbHelper.addTask(task, DBHelper.TABLE_COMPLETED);
+                            dbHelper.deleteTask(task.id, DBHelper.TABLE_ACTIVE);
                             remove(getAdapterPosition());
                             dbHelper.addNewStats(new setZeroTimeDate().transform(new Date()).getTime(),
                                     DBHelper.STATS_TYPE_COMPLETED);
@@ -249,7 +249,7 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
     @Override
     public int getGroupViewType(int position, ExpandableGroup group) {
         Task task = (Task) group;
-        if (parent == PARENT_HOME) { // Если активный элемент
+        if (parent == PARENT_ACTIVE) { // Если активный элемент
             if (task.comment.length() > 0) { // Если есть коммент
                 if (task.subtasks.size() > 0) {  // Если есть пд.
                     return TYPE_IS_COMMENT_IS_SUBTASKS;
@@ -352,7 +352,7 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
         CheckBox checkBox;
         LayoutInflater inflater = LayoutInflater.from(parentView.getContext());
         View view = inflater.inflate(R.layout.subtask, parentView, false);
-        if (parent == PARENT_HOME) {
+        if (parent == PARENT_ACTIVE) {
             checkBox = view.findViewById(R.id.checkBox);
             checkBox.setEnabled(true);
         }

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -14,18 +13,14 @@ import com.example.arraylist.items.FailedTasks;
 import com.example.arraylist.items.Subtask;
 import com.example.arraylist.items.Task;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "database";
 
-    public static final String TABLE_HOME = "home";
+    public static final String TABLE_ACTIVE = "active";
     public static final String TABLE_COMPLETED = "complete";
     public static final String TABLE_FAILED = "failed";
     public static final String TABLE_PLANNED = "planned";
@@ -71,7 +66,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + TABLE_HOME + "(" + COLUMN_ID + " Long primary key," +
+        db.execSQL("create table " + TABLE_ACTIVE + "(" + COLUMN_ID + " Long primary key," +
                 COLUMN_TASK + " text," + COLUMN_COMMENT + " text," + COLUMN_DATE_STRING + " text," +
                 COLUMN_DATE_START + " long," + COLUMN_DATE_FINISH + " long" + ")");
 
@@ -113,7 +108,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public CompletedTasks getCompletedStats(Long dateStart, Long dateFinish) {
         ArrayList<Long> dates = new ArrayList<>();
         ArrayList<Integer> countPerDay = new ArrayList<>();
-        Long ONE_DAY_MILLIS = 86400000L;
+        long ONE_DAY_MILLIS = 86400000L;
         for (long date = dateStart; date <= dateFinish; date += ONE_DAY_MILLIS) {
             String[] selectionArgs = new String[] {String.valueOf(date), String.valueOf(STATS_TYPE_COMPLETED)};
             Cursor cursor = db.query(TABLE_STATS, null,
@@ -132,7 +127,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public FailedTasks getFailedStats(Long dateStart, Long dateFinish) {
         ArrayList<Long> dates = new ArrayList<>();
         ArrayList<Integer> countPerDay = new ArrayList<>();
-        Long ONE_DAY_MILLIS = 86400000L;
+        long ONE_DAY_MILLIS = 86400000L;
         for (long date = dateStart; date <= dateFinish; date += ONE_DAY_MILLIS) {
             String[] selectionArgs = new String[]{String.valueOf(date), String.valueOf(STATS_TYPE_FAILED)};
             Cursor cursor = db.query(TABLE_STATS, null,
@@ -176,6 +171,7 @@ public class DBHelper extends SQLiteOpenHelper {
             time = cursor.getInt(cursor.getColumnIndex(COLUMN_TIME_HOURS));
         else
             time = cursor.getInt(cursor.getColumnIndex(COLUMN_TIME_MINUTES));
+        cursor.close();
         return time;
     }
 
@@ -204,19 +200,19 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public Long getFreeId(String table) {
-        Long freeId;
+        long freeId;
         Cursor cursor = db.query(table, null, null, null, null,
                 null, null);
         if (cursor.moveToLast())
             freeId = cursor.getLong(cursor.getColumnIndex(COLUMN_ID)) + 1;
         else
-            freeId = (long) 0;
+            freeId = 0;
         cursor.close();
         return freeId;
     }
 
     public Boolean getSubtaskChecked(Long id) {
-        Boolean checked;
+        boolean checked;
         String[] selectionArgs = new String[] {String.valueOf(id)};
         Cursor cursor = db.query(TABLE_SUBTASKS, null,
                 "_id = ?", selectionArgs, null, null, null);
@@ -250,7 +246,7 @@ public class DBHelper extends SQLiteOpenHelper {
             date_string = cursor.getString(cursor.getColumnIndex(COLUMN_DATE_STRING));
             date_start = cursor.getLong(cursor.getColumnIndex(COLUMN_DATE_START));
             date_finish = cursor.getLong(cursor.getColumnIndex(COLUMN_DATE_FINISH));
-            subtasks = elementsSubtask(task_name);
+            subtasks = getSubtasks(task_name);
         }
         else {
             task_name = null;
@@ -264,9 +260,9 @@ public class DBHelper extends SQLiteOpenHelper {
         return new Task(id, task_name, comment, date_string, date_start, date_finish, subtasks);
     }
 
-    public ArrayList<Task> elementsHome(){
+    public ArrayList<Task> getTasks(String table) {
         ArrayList<Task> tempElements = new ArrayList<>();
-        Cursor cursor = db.query(TABLE_HOME, null, null, null,
+        Cursor cursor = db.query(table, null, null, null,
                 null, null, null);
         if(cursor.moveToFirst()){
             do{
@@ -276,7 +272,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 String dateString = cursor.getString(cursor.getColumnIndex(COLUMN_DATE_STRING));
                 Long dateStart = cursor.getLong(cursor.getColumnIndex(COLUMN_DATE_START));
                 Long dateFinish = cursor.getLong(cursor.getColumnIndex(COLUMN_DATE_FINISH));
-                ArrayList<Subtask> subtasks = elementsSubtask(task);
+                ArrayList<Subtask> subtasks = getSubtasks(task);
                 tempElements.add(new Task(id, task, comment, dateString,
                         dateStart, dateFinish, subtasks));
             }while (cursor.moveToNext());
@@ -285,70 +281,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return tempElements;
     }
 
-    public ArrayList<Task> elementsComplete(){
-        String sql = "select * from " + TABLE_COMPLETED;
-        ArrayList<Task> tempElements = new ArrayList<>();
-        Cursor cursor = db.rawQuery(sql, null);
-        if(cursor.moveToFirst()){
-            do{
-                Long id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID));
-                String task = cursor.getString(cursor.getColumnIndex(COLUMN_TASK));
-                String comment = cursor.getString(cursor.getColumnIndex(COLUMN_COMMENT));
-                String dateString = cursor.getString(cursor.getColumnIndex(COLUMN_DATE_STRING));
-                Long dateStart = cursor.getLong(cursor.getColumnIndex(COLUMN_DATE_START));
-                Long dateFinish = cursor.getLong(cursor.getColumnIndex(COLUMN_DATE_FINISH));
-                ArrayList<Subtask> subtasks = elementsSubtask(task);
-                tempElements.add(new Task(id, task, comment, dateString,
-                        dateStart, dateFinish, subtasks));
-            }while (cursor.moveToNext());
-        }
-        cursor.close();
-        return tempElements;
-    }
-
-    public ArrayList<Task> elementsFailed(){
-        String sql = "select * from " + TABLE_FAILED;
-        ArrayList<Task> tempElements = new ArrayList<>();
-        Cursor cursor = db.rawQuery(sql, null);
-        if(cursor.moveToFirst()){
-            do{
-                Long id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID));
-                String task = cursor.getString(cursor.getColumnIndex(COLUMN_TASK));
-                String comment = cursor.getString(cursor.getColumnIndex(COLUMN_COMMENT));
-                String dateString = cursor.getString(cursor.getColumnIndex(COLUMN_DATE_STRING));
-                Long dateStart = cursor.getLong(cursor.getColumnIndex(COLUMN_DATE_START));
-                Long dateFinish = cursor.getLong(cursor.getColumnIndex(COLUMN_DATE_FINISH));
-                ArrayList<Subtask> subtasks = elementsSubtask(task);
-                tempElements.add(new Task(id, task, comment, dateString,
-                        dateStart, dateFinish, subtasks));
-            }while (cursor.moveToNext());
-        }
-        cursor.close();
-        return tempElements;
-    }
-
-    public ArrayList<Task> elementsPlanned(){
-        String sql = "select * from " + TABLE_PLANNED;
-        ArrayList<Task> tempElements = new ArrayList<>();
-        Cursor cursor = db.rawQuery(sql, null);
-        if(cursor.moveToFirst()){
-            do{
-                Long id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID));
-                String task = cursor.getString(cursor.getColumnIndex(COLUMN_TASK));
-                String comment = cursor.getString(cursor.getColumnIndex(COLUMN_COMMENT));
-                String dateString = cursor.getString(cursor.getColumnIndex(COLUMN_DATE_STRING));
-                Long dateStart = cursor.getLong(cursor.getColumnIndex(COLUMN_DATE_START));
-                Long dateFinish = cursor.getLong(cursor.getColumnIndex(COLUMN_DATE_FINISH));
-                ArrayList<Subtask> subtasks = elementsSubtask(task);
-                tempElements.add(new Task(id, task, comment, dateString,
-                        dateStart, dateFinish, subtasks));
-            }while (cursor.moveToNext());
-        }
-        cursor.close();
-        return tempElements;
-    }
-
-    public ArrayList<Subtask> elementsSubtask(String key) {
+    public ArrayList<Subtask> getSubtasks(String key) {
         ArrayList<Subtask> tempElements = new ArrayList<>();
         String[] selectionArgs = new String[] {key};
         Cursor cursor = db.query(TABLE_SUBTASKS, null,
@@ -364,52 +297,19 @@ public class DBHelper extends SQLiteOpenHelper {
         return tempElements;
     }
 
-    public void addTableHome(@NonNull Task item){
+    public void addTask(Task item, String table) {
         ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, getFreeId(TABLE_HOME));
+        values.put(COLUMN_ID, getFreeId(table));
         values.put(COLUMN_TASK, item.task);
         values.put(COLUMN_COMMENT, item.comment);
         values.put(COLUMN_DATE_STRING, item.dateString);
         values.put(COLUMN_DATE_START, item.dateStart);
         values.put(COLUMN_DATE_FINISH, item.dateFinish);
-        db.insert(TABLE_HOME, null, values);
+        db.insert(table, null, values);
     }
 
-    public void addTableComplete(@NonNull Task item){
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, getFreeId(TABLE_COMPLETED));
-        values.put(COLUMN_TASK, item.task);
-        values.put(COLUMN_COMMENT, item.comment);
-        values.put(COLUMN_DATE_STRING, item.dateString);
-        values.put(COLUMN_DATE_START, item.dateStart);
-        values.put(COLUMN_DATE_FINISH, item.dateFinish);
-        db.insert(TABLE_COMPLETED, null, values);
-    }
-
-    public void addTableFailed(@NonNull Task item){
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, getFreeId(TABLE_FAILED));
-        values.put(COLUMN_TASK, item.task);
-        values.put(COLUMN_COMMENT, item.comment);
-        values.put(COLUMN_DATE_STRING, item.dateString);
-        values.put(COLUMN_DATE_START, item.dateStart);
-        values.put(COLUMN_DATE_FINISH, item.dateFinish);
-        db.insert(TABLE_FAILED, null, values);
-    }
-
-    public void addTablePlanned(@NonNull Task item){
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, getFreeId(TABLE_PLANNED));
-        values.put(COLUMN_TASK, item.task);
-        values.put(COLUMN_COMMENT, item.comment);
-        values.put(COLUMN_DATE_STRING, item.dateString);
-        values.put(COLUMN_DATE_START, item.dateStart);
-        values.put(COLUMN_DATE_FINISH, item.dateFinish);
-        db.insert(TABLE_PLANNED, null, values);
-    }
-
-    public void addTableSubtasks(@NonNull ArrayList<Subtask> subtasks,
-                                 String key){
+    public void addSubtasks(@NonNull ArrayList<Subtask> subtasks,
+                            String key){
         for (int i = 0; i < subtasks.size(); i++){
             ContentValues values = new ContentValues();
             values.put(COLUMN_ID, getFreeId(TABLE_SUBTASKS));
@@ -427,20 +327,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 new String[] {String.valueOf(id)});
     }
 
-    public void deleteHomeTask(Long id){
-        db.delete(TABLE_HOME, COLUMN_ID	+ "	= ?", new String[] { String.valueOf(id)});
-    }
-
-    public void deleteCompleteTask(Long id){
-        db.delete(TABLE_COMPLETED, COLUMN_ID	+ "	= ?", new String[] { String.valueOf(id)});
-    }
-
-    public void deleteFaildTask(Long id){
-        db.delete(TABLE_FAILED, COLUMN_ID	+ "	= ?", new String[] { String.valueOf(id)});
-    }
-
-    public void deletePlannedTask(Long id){
-        db.delete(TABLE_PLANNED, COLUMN_ID	+ "	= ?", new String[] { String.valueOf(id)});
+    public void deleteTask(Long id, String table) {
+        db.delete(table, COLUMN_ID	+ "	= ?", new String[] { String.valueOf(id)});
     }
 
     public void deleteSubtasks(ArrayList<Long> id){

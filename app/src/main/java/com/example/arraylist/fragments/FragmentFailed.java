@@ -11,16 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.arraylist.DB.DBHelper;
-import com.example.arraylist.activities.AddActivity;
 import com.example.arraylist.adapters.MultiTypeTaskAdapter;
 import com.example.arraylist.R;
 import com.example.arraylist.other.TaskTimeChecker;
 import com.example.arraylist.other.setZeroTimeDate;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Date;
 
@@ -32,7 +29,7 @@ public class FragmentFailed extends Fragment {
 
     private DBHelper dbHelper;
     private RecyclerView recyclerView;
-    private TextView textView;
+    public TextView textView;
 
     public FragmentFailed() {
         // Required empty public constructor
@@ -63,10 +60,10 @@ public class FragmentFailed extends Fragment {
         taskTimeChecker.checkPlannedTasks();
         taskTimeChecker.checkActiveTasks();
 
-        MultiTypeTaskAdapter adapter = new MultiTypeTaskAdapter(dbHelper.elementsFailed(),
+        MultiTypeTaskAdapter adapter = new MultiTypeTaskAdapter(dbHelper.getTasks(DBHelper.TABLE_FAILED),
                 MultiTypeTaskAdapter.PARENT_FAILED, getContext());
         recyclerView.setAdapter(adapter);
-        if (dbHelper.elementsFailed().size() != 0)
+        if (dbHelper.getTasks(DBHelper.TABLE_FAILED).size() != 0)
             textView.setVisibility(View.GONE);
         else {
             textView.setText("Нет проваленных задач.");

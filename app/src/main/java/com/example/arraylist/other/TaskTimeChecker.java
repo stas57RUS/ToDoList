@@ -23,19 +23,20 @@ public class TaskTimeChecker {
     public void checkPlannedTasks() {
         String[] selectionArgs = new String[] { today.toString() };
 
-        Cursor cursor = db.query("planned", null,
+        Cursor cursor = db.query(DBHelper.TABLE_PLANNED, null,
                 "date_start <= ?", selectionArgs, null, null, null);
 
         if (cursor.moveToFirst()) {
             do {
-                dbHelper.addTableHome(new Task(null,
+                dbHelper.addTask(new Task(null,
                         cursor.getString(cursor.getColumnIndex("task")),
                         cursor.getString(cursor.getColumnIndex("comment")),
                         cursor.getString(cursor.getColumnIndex("date_string")),
                         cursor.getLong(cursor.getColumnIndex("date_start")),
                         cursor.getLong(cursor.getColumnIndex("date_finish")),
-                        null));
-                dbHelper.deletePlannedTask(cursor.getLong(cursor.getColumnIndex("_id")));
+                        null), DBHelper.TABLE_ACTIVE);
+                dbHelper.deleteTask(cursor.getLong(cursor.getColumnIndex("_id")),
+                        DBHelper.TABLE_PLANNED);
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -44,19 +45,20 @@ public class TaskTimeChecker {
     public void checkActiveTasks() {
         String[] selectionArgs = new String[] { today.toString() };
 
-        Cursor cursor = db.query("home", null,
+        Cursor cursor = db.query(DBHelper.TABLE_ACTIVE, null,
                 "date_finish < ?", selectionArgs, null, null, null);
 
         if (cursor.moveToFirst()) {
             do {
-                dbHelper.addTableFailed(new Task(null,
+                dbHelper.addTask(new Task(null,
                         cursor.getString(cursor.getColumnIndex("task")),
                         cursor.getString(cursor.getColumnIndex("comment")),
                         cursor.getString(cursor.getColumnIndex("date_string")),
                         cursor.getLong(cursor.getColumnIndex("date_start")),
                         cursor.getLong(cursor.getColumnIndex("date_finish")),
-                        null));
-                dbHelper.deleteHomeTask(cursor.getLong(cursor.getColumnIndex("_id")));
+                        null), DBHelper.TABLE_FAILED);
+                dbHelper.deleteTask(cursor.getLong(cursor.getColumnIndex("_id")),
+                        DBHelper.TABLE_ACTIVE);
                 dbHelper.addNewStats(new setZeroTimeDate().transform(new Date()).getTime(),
                         DBHelper.STATS_TYPE_FAILED);
             } while (cursor.moveToNext());

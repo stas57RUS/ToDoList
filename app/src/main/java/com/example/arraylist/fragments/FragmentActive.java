@@ -1,6 +1,5 @@
 package com.example.arraylist.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -10,29 +9,26 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.arraylist.DB.DBHelper;
 import com.example.arraylist.adapters.MultiTypeTaskAdapter;
 import com.example.arraylist.R;
 import com.example.arraylist.other.TaskTimeChecker;
-import com.example.arraylist.activities.AddActivity;
 import com.example.arraylist.other.setZeroTimeDate;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentHome extends Fragment {
+public class FragmentActive extends Fragment {
 
     private DBHelper dbHelper;
     private RecyclerView recyclerView;
     private TextView textView;
 
-    public FragmentHome() {
+    public FragmentActive() {
         // Required empty public constructor
     }
 
@@ -62,10 +58,10 @@ public class FragmentHome extends Fragment {
         taskTimeChecker.checkPlannedTasks();
         taskTimeChecker.checkActiveTasks();
 
-        final MultiTypeTaskAdapter adapter = new MultiTypeTaskAdapter(dbHelper.elementsHome(),
-                MultiTypeTaskAdapter.PARENT_HOME, getContext());
+        final MultiTypeTaskAdapter adapter = new MultiTypeTaskAdapter(dbHelper.getTasks(DBHelper.TABLE_ACTIVE),
+                MultiTypeTaskAdapter.PARENT_ACTIVE, getContext());
         recyclerView.setAdapter(adapter);
-        if (dbHelper.elementsHome().size() != 0)
+        if (dbHelper.getTasks(DBHelper.TABLE_ACTIVE).size() != 0)
             textView.setVisibility(View.GONE);
         else {
             textView.setText("Нет текущих задач.");
