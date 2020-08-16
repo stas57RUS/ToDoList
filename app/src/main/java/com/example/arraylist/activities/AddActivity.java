@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.core.util.Pair;
 import android.view.View;
@@ -24,6 +25,8 @@ import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,7 +55,7 @@ public class AddActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         dbHelper = new DBHelper(getApplicationContext());
-        ImageButton imageButton = findViewById(R.id.imageButton);
+        FloatingActionButton FAB = findViewById(R.id.fab);
         tvDate = findViewById(R.id.date);
         ImageView imageDate = findViewById(R.id.imageDate);
 
@@ -105,7 +108,7 @@ public class AddActivity extends AppCompatActivity {
                 }
             });
 
-            imageButton.setOnClickListener(new View.OnClickListener() {
+            FAB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Task task = getData();
@@ -121,6 +124,9 @@ public class AddActivity extends AppCompatActivity {
             });
         }
         else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                FAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_done, this.getTheme()));
+            }
             EditText task_name = findViewById(R.id.task);
             EditText comment = findViewById(R.id.comment);
             TextView date_string = findViewById(R.id.date);
@@ -168,7 +174,7 @@ public class AddActivity extends AppCompatActivity {
                 }
             });
 
-            imageButton.setOnClickListener(new View.OnClickListener() {
+            FAB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 

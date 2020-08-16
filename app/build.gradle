@@ -9,12 +9,12 @@ android {
         abortOnError false
     }
 
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.1"
     defaultConfig {
         applicationId "com.example.arraylist"
         minSdkVersion 19
-        targetSdkVersion 28
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -50,4 +50,5 @@ dependencies {
     //noinspection GradleCompatible
     implementation 'androidx.legacy:legacy-support-core-utils:1.0.0'
     implementation 'org.jetbrains:annotations-java5:15.0'
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
 }

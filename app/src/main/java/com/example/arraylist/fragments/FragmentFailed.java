@@ -20,6 +20,7 @@ import com.example.arraylist.adapters.MultiTypeTaskAdapter;
 import com.example.arraylist.R;
 import com.example.arraylist.other.TaskTimeChecker;
 import com.example.arraylist.other.setZeroTimeDate;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Date;
 
@@ -48,16 +49,6 @@ public class FragmentFailed extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         RecyclerView.ItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(divider);
-
-        ImageButton imageButton = view.findViewById(R.id.imageButton);
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), AddActivity.class);
-                intent.putExtra("type", AddActivity.TYPE_ADD);
-                startActivity(intent);
-            }
-        });
 
         textView = view.findViewById(R.id.textView);
 

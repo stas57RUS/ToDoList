@@ -52,7 +52,7 @@ public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.Subtasks
             super(itemView);
             this.customEditTextListener = customEditTextListener;
             editText = itemView.findViewById(R.id.editText);
-            imageButton = itemView.findViewById(R.id.imageButton);
+            imageButton = itemView.findViewById(R.id.fab);
             editText.addTextChangedListener(customEditTextListener);
         }
 

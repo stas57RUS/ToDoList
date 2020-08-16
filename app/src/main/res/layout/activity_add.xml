@@ -10,15 +10,19 @@
         android:id="@+id/toolbar"
         layout="@layout/toolbar"/>
 
-    <ImageButton
-        android:id="@+id/imageButton"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_margin="12dp"
-        app:srcCompat="@android:drawable/ic_menu_add" />
+        android:clickable="true"
+        android:src="@drawable/ic_add"
+        android:backgroundTint="@color/colorPrimary"
+        app:tint="@color/white"
+        android:focusable="true"
+        android:layout_marginRight="11dp"
+        android:layout_marginBottom="16dp"/>
 
 
     <EditText
@@ -73,6 +77,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/date"
         android:layout_marginVertical="7dp"
-        android:layout_marginLeft="40dp" />
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="16dp"/>
 
 </RelativeLayout>

@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
@@ -29,7 +28,6 @@ import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import static android.view.animation.Animation.RELATIVE_TO_SELF;
 
 public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter<MultiTypeTaskAdapter.TaskViewHolder,
         MultiTypeTaskAdapter.SubtaskViewHolder> {
@@ -74,7 +72,7 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
 
             tvTask = itemView.findViewById(R.id.task);
             date = itemView.findViewById(R.id.date);
-            imageButton = itemView.findViewById(R.id.imageButton);
+            imageButton = itemView.findViewById(R.id.fab);
 
             switch (viewType){
                 case TYPE_IS_COMMENT_IS_SUBTASKS:
@@ -336,7 +334,7 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
         View view = inflater.inflate(LayoutIdForListItem, parentView, false);
 
         if (parent == PARENT_PLANNED) {
-            ImageButton imageButton = view.findViewById(R.id.imageButton);
+            ImageButton imageButton = view.findViewById(R.id.fab);
             imageButton.setImageResource(R.drawable.pending_24px);
         }
         return new TaskViewHolder(view, viewType);

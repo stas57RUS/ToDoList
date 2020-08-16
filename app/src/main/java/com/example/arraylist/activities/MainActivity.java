@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.arraylist.DB.DBHelper;
 import com.example.arraylist.fragments.FragmentCharts;
@@ -25,6 +26,7 @@ import com.example.arraylist.R;
 import com.example.arraylist.scheduledNotification.AlarmHelper;
 import com.example.arraylist.scheduledNotification.TimeNotification;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Calendar;
 
@@ -38,29 +40,23 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        AlarmHelper alarmHelper = new AlarmHelper(getApplicationContext());
-        alarmHelper.run();
+        FloatingActionButton FAB = findViewById(R.id.fab);
+        FAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AddActivity.class);
+                intent.putExtra("type", AddActivity.TYPE_ADD);
+                startActivity(intent);
+            }
+        });
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FragmentHome())
                 .commit();
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
-    }
 
-    private void alarmStats() {
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-        Intent intent = new Intent(getApplicationContext(), TimeNotification.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),
-                1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 5);
-
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pendingIntent);
+        AlarmHelper alarmHelper = new AlarmHelper(getApplicationContext());
+        alarmHelper.run();
     }
 
     @Override
