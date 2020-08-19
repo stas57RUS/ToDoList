@@ -337,4 +337,8 @@ public class DBHelper extends SQLiteOpenHelper {
                     new String[]{String.valueOf(id.get(i))});
         }
     }
+
+    public void deleteStats() {
+        db.delete(TABLE_STATS, null, null);
+    }
 }

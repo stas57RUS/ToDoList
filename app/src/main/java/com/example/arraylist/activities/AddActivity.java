@@ -114,7 +114,7 @@ public class AddActivity extends AppCompatActivity {
                         if (task.dateStart.equals(today))
                             dbHelper.addTask(task, DBHelper.TABLE_ACTIVE);
                         else
-                            dbHelper.addTask(task, DBHelper.TABLE_ACTIVE);
+                            dbHelper.addTask(task, DBHelper.TABLE_PLANNED);
                         dbHelper.addSubtasks(task.subtasks, task.task);
                     }
                     finish();

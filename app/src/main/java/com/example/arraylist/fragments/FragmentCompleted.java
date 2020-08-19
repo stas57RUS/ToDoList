@@ -22,14 +22,14 @@ import java.util.Date;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentComplete extends Fragment {
+public class FragmentCompleted extends Fragment {
 
     private DBHelper dbHelper;
     private RecyclerView recyclerView;
     public TextView textView;
 
 
-    public FragmentComplete() {
+    public FragmentCompleted() {
         // Required empty public constructor
     }
 
@@ -46,6 +46,7 @@ public class FragmentComplete extends Fragment {
         recyclerView.addItemDecoration(divider);
 
         textView = view.findViewById(R.id.textView);
+        textView.setText("Нет выполненных задач.");
 
         return view;
     }
@@ -59,13 +60,12 @@ public class FragmentComplete extends Fragment {
         taskTimeChecker.checkActiveTasks();
 
         MultiTypeTaskAdapter adapter = new MultiTypeTaskAdapter(dbHelper.getTasks(DBHelper.TABLE_COMPLETED),
-                MultiTypeTaskAdapter.PARENT_COMPLETED, getContext());
+                MultiTypeTaskAdapter.PARENT_COMPLETED, null, this,
+                null, null, getContext());
         recyclerView.setAdapter(adapter);
         if (dbHelper.getTasks(DBHelper.TABLE_COMPLETED).size() != 0)
             textView.setVisibility(View.GONE);
-        else {
-            textView.setText("Нет выполненных задач.");
+        else
             textView.setVisibility(View.VISIBLE);
-        }
     }
 }

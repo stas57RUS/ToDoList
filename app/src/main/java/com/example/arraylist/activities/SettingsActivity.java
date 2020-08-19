@@ -4,18 +4,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
+import android.app.AlertDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.arraylist.DB.DBHelper;
 import com.example.arraylist.R;
 import com.example.arraylist.other.TimePicker;
 import com.example.arraylist.scheduledNotification.AlarmHelper;
+
+import org.w3c.dom.Text;
 
 public class SettingsActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
     private DBHelper dbHelper;
@@ -56,6 +61,31 @@ public class SettingsActivity extends AppCompatActivity implements TimePickerDia
                 DialogFragment timePicker = new TimePicker(dbHelper.getAlarmTime(hours),
                         dbHelper.getAlarmTime(minutes));
                 timePicker.show(getSupportFragmentManager(), "time picker");
+            }
+        });
+
+        TextView tvDeleteStats = findViewById(R.id.tvDeleteStats);
+        tvDeleteStats.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog dialog = new AlertDialog.Builder(SettingsActivity.this).
+                        setMessage("Данные будет нельзя восстановить. Удалить?")
+                        .setPositiveButton("Удалить", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                DBHelper dbHelper = new DBHelper(SettingsActivity.this);
+                                dbHelper.deleteStats();
+                                Toast.makeText(SettingsActivity.this,"Данные удалены.",
+                                        Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }
+                        }).setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        }).create();
+                dialog.show();
             }
         });
     }

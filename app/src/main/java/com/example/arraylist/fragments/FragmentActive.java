@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,7 @@ public class FragmentActive extends Fragment {
 
     private DBHelper dbHelper;
     private RecyclerView recyclerView;
-    private TextView textView;
+    public TextView textView;
 
     public FragmentActive() {
         // Required empty public constructor
@@ -45,6 +46,7 @@ public class FragmentActive extends Fragment {
         recyclerView.addItemDecoration(divider);
 
         textView = view.findViewById(R.id.textView);
+        textView.setText("Нет текущих задач.");
 
         return view;
     }
@@ -59,13 +61,12 @@ public class FragmentActive extends Fragment {
         taskTimeChecker.checkActiveTasks();
 
         final MultiTypeTaskAdapter adapter = new MultiTypeTaskAdapter(dbHelper.getTasks(DBHelper.TABLE_ACTIVE),
-                MultiTypeTaskAdapter.PARENT_ACTIVE, getContext());
+                MultiTypeTaskAdapter.PARENT_ACTIVE, this, null,
+                null, null, getContext());
         recyclerView.setAdapter(adapter);
         if (dbHelper.getTasks(DBHelper.TABLE_ACTIVE).size() != 0)
             textView.setVisibility(View.GONE);
-        else {
-            textView.setText("Нет текущих задач.");
+        else
             textView.setVisibility(View.VISIBLE);
-        }
     }
 }

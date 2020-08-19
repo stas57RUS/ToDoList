@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
@@ -16,6 +18,10 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.example.arraylist.DB.DBHelper;
+import com.example.arraylist.fragments.FragmentActive;
+import com.example.arraylist.fragments.FragmentCompleted;
+import com.example.arraylist.fragments.FragmentFailed;
+import com.example.arraylist.fragments.FragmentPlanned;
 import com.example.arraylist.items.Subtask;
 import com.example.arraylist.items.Task;
 import com.example.arraylist.R;
@@ -29,12 +35,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static android.view.animation.Animation.RELATIVE_TO_SELF;
+
 public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter<MultiTypeTaskAdapter.TaskViewHolder,
         MultiTypeTaskAdapter.SubtaskViewHolder> {
 
     private List<? extends  ExpandableGroup> groups;
     private int parent;
     private Context context;
+    private TextView textView;
 
     public static final int TYPE_IS_COMMENT_IS_SUBTASKS = 3;
     public static final int TYPE_IS_COMMENT_ISNT_SUBTASKS = 4;
@@ -50,11 +59,32 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
     public static final int PARENT_FAILED = 15;
     public static final int PARENT_PLANNED = 16;
 
-    public MultiTypeTaskAdapter(List<? extends ExpandableGroup> groups, int parent, Context context) {
+    public MultiTypeTaskAdapter(List<? extends ExpandableGroup> groups, int parent,
+                                FragmentActive fragmentActive, FragmentCompleted fragmentCompleted,
+                                FragmentFailed fragmentFailed, FragmentPlanned fragmentPlanned,
+                                Context context) {
         super(groups);
         this.groups = groups;
         this.parent = parent;
         this.context = context;
+        switch (parent) {
+            case PARENT_ACTIVE:
+                textView = fragmentActive.textView;
+                textView.setText("Нет текущих задач.");
+                break;
+            case PARENT_COMPLETED:
+                textView = fragmentCompleted.textView;
+                textView.setText("Нет выполненных задач.");
+                break;
+            case PARENT_FAILED:
+                textView = fragmentFailed.textView;
+                textView.setText("Нет проваленных задач.");
+                break;
+            case PARENT_PLANNED:
+                textView = fragmentPlanned.textView;
+                textView.setText("Нет запланированных задач.");
+                break;
+        }
     }
 
     class TaskViewHolder extends GroupViewHolder {
@@ -172,6 +202,7 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
                     }
                     dbHelper.deleteSubtasks(ids);
                     remove(getAdapterPosition());
+                    updateTextViewInFragment();
                 }
             });
 
@@ -188,6 +219,7 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
                             dbHelper.addNewStats(new setZeroTimeDate().transform(new Date()).getTime(),
                                     DBHelper.STATS_TYPE_COMPLETED);
                         }
+                        updateTextViewInFragment();
                     }
                 });
             }
@@ -213,9 +245,42 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
             }
         }
 
+        @Override
+        public void expand() {
+            animateExpand();
+        }
+
+        @Override
+        public void collapse() {
+            animateCollapse();
+        }
+
+        private void animateExpand() {
+            RotateAnimation rotate =
+                    new RotateAnimation(360, 180, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
+            rotate.setDuration(300);
+            rotate.setFillAfter(true);
+            arrow.setAnimation(rotate);
+        }
+
+        private void animateCollapse() {
+            RotateAnimation rotate =
+                    new RotateAnimation(180, 360, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
+            rotate.setDuration(300);
+            rotate.setFillAfter(true);
+            arrow.setAnimation(rotate);
+        }
+
         public void remove(int position){
             groups.remove(position);
             notifyDataSetChanged();
+        }
+
+        public void updateTextViewInFragment() {
+            if (getItemCount() == 0)
+                textView.setVisibility(View.VISIBLE);
+            else
+                textView.setVisibility(View.GONE);
         }
     }
 

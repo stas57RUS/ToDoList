@@ -14,7 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.arraylist.fragments.FragmentCharts;
-import com.example.arraylist.fragments.FragmentComplete;
+import com.example.arraylist.fragments.FragmentCompleted;
 import com.example.arraylist.fragments.FragmentFailed;
 import com.example.arraylist.fragments.FragmentActive;
 import com.example.arraylist.fragments.FragmentPlanned;
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                             selectFragment = new FragmentActive();
                             break;
                         case R.id.completed:
-                            selectFragment = new FragmentComplete();
+                            selectFragment = new FragmentCompleted();
                             break;
                         case R.id.failed:
                             selectFragment = new FragmentFailed();

@@ -48,6 +48,7 @@ public class FragmentFailed extends Fragment {
         recyclerView.addItemDecoration(divider);
 
         textView = view.findViewById(R.id.textView);
+        textView.setText("Нет проваленных задач.");
 
         return view;
     }
@@ -61,13 +62,12 @@ public class FragmentFailed extends Fragment {
         taskTimeChecker.checkActiveTasks();
 
         MultiTypeTaskAdapter adapter = new MultiTypeTaskAdapter(dbHelper.getTasks(DBHelper.TABLE_FAILED),
-                MultiTypeTaskAdapter.PARENT_FAILED, getContext());
+                MultiTypeTaskAdapter.PARENT_FAILED, null, null,
+                this, null, getContext());
         recyclerView.setAdapter(adapter);
         if (dbHelper.getTasks(DBHelper.TABLE_FAILED).size() != 0)
             textView.setVisibility(View.GONE);
-        else {
-            textView.setText("Нет проваленных задач.");
+        else
             textView.setVisibility(View.VISIBLE);
-        }
     }
 }

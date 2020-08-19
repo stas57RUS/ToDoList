@@ -45,6 +45,7 @@ public class FragmentPlanned extends Fragment {
         recyclerView.addItemDecoration(divider);
 
         textView = view.findViewById(R.id.textView);
+        textView.setText("Нет запланированных задач.");
 
         return view;
     }
@@ -58,13 +59,12 @@ public class FragmentPlanned extends Fragment {
         taskTimeChecker.checkActiveTasks();
 
         MultiTypeTaskAdapter adapter = new MultiTypeTaskAdapter(dbHelper.getTasks(DBHelper.TABLE_PLANNED),
-                MultiTypeTaskAdapter.PARENT_PLANNED, getContext());
+                MultiTypeTaskAdapter.PARENT_PLANNED, null, null,
+                null, this, getContext());
         recyclerView.setAdapter(adapter);
         if (dbHelper.getTasks(DBHelper.TABLE_PLANNED).size() != 0)
             textView.setVisibility(View.GONE);
-        else {
-            textView.setText("Нет запланированных задач.");
+        else
             textView.setVisibility(View.VISIBLE);
-        }
     }
 }
