@@ -247,12 +247,14 @@ public class MultiTypeTaskAdapter extends MultiTypeExpandableRecyclerViewAdapter
 
         @Override
         public void expand() {
-            animateExpand();
+            if (viewType == 3 || viewType == 6 || viewType == 7 || viewType == 9)
+                animateExpand();
         }
 
         @Override
         public void collapse() {
-            animateCollapse();
+            if (viewType == 3 || viewType == 6 || viewType == 7 || viewType == 9)
+                animateCollapse();
         }
 
         private void animateExpand() {
