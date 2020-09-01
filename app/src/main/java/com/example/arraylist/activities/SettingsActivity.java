@@ -51,7 +51,7 @@ public class SettingsActivity extends AppCompatActivity implements TimePickerDia
 
         final int hours = DBHelper.ALARM_HOURS, minutes = DBHelper.ALARM_MINUTES;
         TextView tvTimePickerTime = findViewById(R.id.tvTimePickerTime);
-        tvTimePickerTime.setText("После - " + dbHelper.getAlarmTime(hours) + ":" +
+        tvTimePickerTime.setText(dbHelper.getAlarmTime(hours) + ":" +
                 dbHelper.getAlarmTime(minutes));
 
         RelativeLayout timePickerButton = findViewById(R.id.timePicker);
@@ -94,9 +94,9 @@ public class SettingsActivity extends AppCompatActivity implements TimePickerDia
     public void onTimeSet(android.widget.TimePicker timePicker, int hours, int minutes) {
         TextView alarmTime = findViewById(R.id.tvTimePickerTime);
         if (minutes < 10)
-            alarmTime.setText("После - " + hours + ":0" + minutes);
+            alarmTime.setText(hours + ":0" + minutes);
         else
-            alarmTime.setText("После - " + hours + ":" + minutes);
+            alarmTime.setText(hours + ":" + minutes);
 
         dbHelper.updateAlarmTime(hours, minutes);
         dbHelper.updateAlarmState(DBHelper.ALARM_STATE_WAITING_UPDATE);
